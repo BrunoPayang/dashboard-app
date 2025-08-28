@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://72814d906075.ngrok-free.app/api',
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token');
         if (refreshToken) {
           const response = await axios.post(
-            `${process.env.REACT_APP_API_BASE_URL || 'https://72814d906075.ngrok-free.app/api'}/auth/token/refresh/`,
+            `${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/auth/token/refresh/`,
             { refresh: refreshToken }
           );
 

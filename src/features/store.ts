@@ -1,34 +1,37 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { authApi } from './auth/authApi';
-import { studentsApi } from './students/studentsApi';
-import { parentsApi } from './parents/parentsApi';
-import { academicsApi } from './academics/academicsApi';
-import { notificationsApi } from './notifications/notificationsApi';
-import { filesApi } from './files/filesApi';
-import { schoolApi } from './school/schoolApi';
+import { studentApi } from './students/studentApi';
+
+import { paymentApi } from '../services/api/paymentApi';
+import { academicApi } from '../services/api/academicApi';
+
 import authReducer from './auth/authSlice';
+import studentReducer from './students/studentSlice';
+import paymentReducer from './payments/paymentSlice';
+import academicReducer from './academics/academicSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    students: studentReducer,
+    payments: paymentReducer,
+    academics: academicReducer,
     [authApi.reducerPath]: authApi.reducer,
-    [studentsApi.reducerPath]: studentsApi.reducer,
-    [parentsApi.reducerPath]: parentsApi.reducer,
-    [academicsApi.reducerPath]: academicsApi.reducer,
-    [notificationsApi.reducerPath]: notificationsApi.reducer,
-    [filesApi.reducerPath]: filesApi.reducer,
-    [schoolApi.reducerPath]: schoolApi.reducer,
+    [studentApi.reducerPath]: studentApi.reducer,
+
+    [paymentApi.reducerPath]: paymentApi.reducer,
+    [academicApi.reducerPath]: academicApi.reducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware,
-      studentsApi.middleware,
-      parentsApi.middleware,
-      academicsApi.middleware,
-      notificationsApi.middleware,
-      filesApi.middleware,
-      schoolApi.middleware,
+      studentApi.middleware,
+
+      paymentApi.middleware,
+      academicApi.middleware,
+
     ),
 });
 

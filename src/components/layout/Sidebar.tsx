@@ -12,11 +12,12 @@ import {
   Dashboard,
   People,
   School,
-  Book,
+  Payment,
   Notifications,
   Folder,
   Assessment,
   Settings,
+
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -26,14 +27,15 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-  { text: 'Students', icon: <People />, path: '/students' },
-  { text: 'Parents', icon: <School />, path: '/parents' },
-  { text: 'Academics', icon: <Book />, path: '/academics' },
+  { text: 'Tableau de Bord', icon: <Dashboard />, path: '/dashboard' },
+  { text: 'Étudiants', icon: <People />, path: '/students' },
+
+  { text: 'Paiements', icon: <Payment />, path: '/payments' },
+  { text: 'Académique', icon: <School />, path: '/academics' },
   { text: 'Notifications', icon: <Notifications />, path: '/notifications' },
-  { text: 'Files', icon: <Folder />, path: '/files' },
-  { text: 'Reports', icon: <Assessment />, path: '/reports' },
-  { text: 'Settings', icon: <Settings />, path: '/settings' },
+  { text: 'Fichiers', icon: <Folder />, path: '/files' },
+  { text: 'Rapports', icon: <Assessment />, path: '/reports' },
+  { text: 'Paramètres', icon: <Settings />, path: '/settings' },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {

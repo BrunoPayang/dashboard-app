@@ -7,37 +7,22 @@ import { checkAuthStatus } from './features/auth/authSlice';
 
 // Layout Components
 import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Pages
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import StudentsPage from './pages/students/StudentsPage';
-import ParentsPage from './pages/parents/ParentsPage';
+import StudentDetailPage from './pages/students/StudentDetailPage';
+import StudentEditPage from './pages/students/StudentEditPage';
+import StudentCreatePage from './pages/students/StudentCreatePage';
+
+import PaymentsPage from './pages/payments/PaymentsPage';
 import AcademicsPage from './pages/academics/AcademicsPage';
 import NotificationsPage from './pages/notifications/NotificationsPage';
 import FilesPage from './pages/files/FilesPage';
 import ReportsPage from './pages/reports/ReportsPage';
 import SettingsPage from './pages/settings/SettingsPage';
-
-// Protected Route Component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useSelector((state: RootState) => state.auth);
-  
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-  
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-};
 
 function App() {
   const dispatch = useDispatch();
@@ -76,7 +61,11 @@ function App() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="students" element={<StudentsPage />} />
-        <Route path="parents" element={<ParentsPage />} />
+        <Route path="students/create" element={<StudentCreatePage />} />
+        <Route path="students/:id" element={<StudentDetailPage />} />
+        <Route path="students/:id/edit" element={<StudentEditPage />} />
+
+        <Route path="payments" element={<PaymentsPage />} />
         <Route path="academics" element={<AcademicsPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="files" element={<FilesPage />} />

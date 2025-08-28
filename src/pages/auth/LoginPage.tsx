@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Paper,
@@ -8,42 +8,18 @@ import {
   Alert,
   CircularProgress,
   Container,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../../features/auth/authApi';
-import { setUser } from '../../features/auth/authSlice';
-
-// Custom yup resolver to avoid import issues
-const yupResolver = (schema: any) => async (data: any) => {
-  try {
-    const validatedData = await schema.validate(data, { abortEarly: false });
-    return {
-      values: validatedData,
-      errors: {},
-    };
-  } catch (err: any) {
-    if (err.inner) {
-      const errors = err.inner.reduce((acc: any, error: any) => {
-        acc[error.path] = {
-          type: error.type,
-          message: error.message,
-        };
-        return acc;
-      }, {});
-      return {
-        values: {},
-        errors,
-      };
-    }
-    return {
-      values: {},
-      errors: {},
-    };
-  }
-};
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const schema = yup.object({
   username: yup.string().required('Username is required'),
@@ -53,9 +29,24 @@ const schema = yup.object({
 type LoginFormData = yup.InferType<typeof schema>;
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const location = useLocation();
+  const { login, isLoading, error: authError, isAuthenticated } = useAuth();
+  
+  // Get error from location state (for access denied redirects)
+  const locationState = location.state as any;
+  const redirectError = locationState?.error;
+  const error = authError || redirectError;
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   const {
     register,
@@ -67,30 +58,23 @@ const LoginPage: React.FC = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const result = await login(data).unwrap();
-      
-      // Store tokens
-      localStorage.setItem('access_token', result.access);
-      localStorage.setItem('refresh_token', result.refresh);
-      
-      // Update Redux state
-      dispatch(setUser(result.user));
-      
-      // Navigate to dashboard
-      navigate('/dashboard');
+      console.log('Submitting login form with data:', data);
+      const result = await login(data);
+      console.log('Login successful, result:', result);
+      // Navigation will be handled by useEffect when isAuthenticated changes
     } catch (err) {
-      // Error is handled by RTK Query
-      console.error('Login failed:', err);
+      console.error('Login failed in component:', err);
+      // Error is handled by the slice
     }
   };
 
   // Check if user is already authenticated
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      navigate('/dashboard');
+    if (isAuthenticated) {
+      const from = (location.state as any)?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
     }
-  }, [navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -116,12 +100,15 @@ const LoginPage: React.FC = () => {
             School Dashboard
           </Typography>
           <Typography component="h2" variant="h6" color="textSecondary" gutterBottom>
-            Sign in to your account
+            Sign in to School Dashboard
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 2, textAlign: 'center' }}>
+            Access for school staff only
           </Typography>
 
           {error && (
             <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              Invalid username or password
+              {error}
             </Alert>
           )}
 
@@ -141,12 +128,26 @@ const LoginPage: React.FC = () => {
               margin="normal"
               fullWidth
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
               autoComplete="current-password"
               {...register('password')}
               error={!!errors.password}
               helperText={errors.password?.message}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"

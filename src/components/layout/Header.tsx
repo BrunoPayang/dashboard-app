@@ -17,7 +17,7 @@ import {
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../features/store';
+import { RootState, AppDispatch } from '../../features/store';
 import { logout } from '../../features/auth/authSlice';
 
 interface HeaderProps {
@@ -25,7 +25,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { user, school } = useSelector((state: RootState) => state.auth);
   
