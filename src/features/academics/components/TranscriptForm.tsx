@@ -19,7 +19,8 @@ import {
   useCreateTranscriptMutation,
   useUpdateTranscriptMutation 
 } from '../../../services/api/academicApi';
-import { useGetStudentsQuery, type Student } from '../../students/studentsApi';
+import { useGetStudentsQuery } from '../../students/studentApi';
+import type { Student } from '../../../types/student';
 
 import type { 
   TranscriptRecord, 

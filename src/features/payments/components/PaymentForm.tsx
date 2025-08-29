@@ -18,7 +18,8 @@ import {
   useCreatePaymentRecordMutation,
   useUpdatePaymentRecordMutation 
 } from '../../../services/api/paymentApi';
-import { useGetStudentsQuery, type Student } from '../../students/studentsApi';
+import { useGetStudentsQuery } from '../../students/studentApi';
+import type { Student } from '../../../types/student';
 import { PAYMENT_TYPES, PAYMENT_STATUSES, PAYMENT_METHODS } from '../../../types/payment';
 import { useAppSelector } from '../../../hooks/redux';
 import type { 

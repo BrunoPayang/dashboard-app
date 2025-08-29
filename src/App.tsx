@@ -19,6 +19,7 @@ import StudentCreatePage from './pages/students/StudentCreatePage';
 
 import PaymentsPage from './pages/payments/PaymentsPage';
 import AcademicsPage from './pages/academics/AcademicsPage';
+import ParentsPage from './pages/parents/ParentsPage';
 import NotificationsPage from './pages/notifications/NotificationsPage';
 import FilesPage from './pages/files/FilesPage';
 import ReportsPage from './pages/reports/ReportsPage';
@@ -67,6 +68,7 @@ function App() {
 
         <Route path="payments" element={<PaymentsPage />} />
         <Route path="academics" element={<AcademicsPage />} />
+        <Route path="parents" element={<ParentsPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="files" element={<FilesPage />} />
         <Route path="reports" element={<ReportsPage />} />
