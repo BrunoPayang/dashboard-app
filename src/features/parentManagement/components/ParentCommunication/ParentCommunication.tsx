@@ -25,8 +25,6 @@ import {
   DialogActions,
   Tabs,
   Tab,
-  Switch,
-  FormControlLabel,
   IconButton,
   Divider
 } from '@mui/material';
@@ -45,6 +43,8 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useAppSelector } from '../../../../hooks/redux';
+import { useGetParentsFromRelationshipsQuery } from '../../../../services/api/parentManagementApi';
 
 interface MessageTemplate {
   id: string;
@@ -59,38 +59,46 @@ interface MessageTemplate {
 
 interface Notification {
   id: string;
-  template_id: string;
-  recipients: string[];
-  subject: string;
-  content: string;
+  title: string;
+  body: string;
   type: 'email' | 'sms' | 'notification';
-  scheduled_for?: string;
-  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'failed';
+  notification_type: 'academic' | 'behavior' | 'payment' | 'general';
+  target_user_ids: number[];
+  recipients: number[];
+  school: string;
+  data: string;
+  sent_via_fcm: boolean;
+  sent_via_email: boolean;
+  sent_via_sms: boolean;
+  status: 'sent' | 'sending' | 'failed' | 'scheduled';
   sent_count: number;
   failed_count: number;
+  scheduled_for?: string;
   created_at: string;
-  sent_at?: string;
 }
 
 interface NotificationFormData {
-  template_id: string;
-  recipients: string;
-  subject: string;
-  content: string;
-  type: 'email' | 'sms' | 'notification';
-  scheduled_for?: string;
-  is_urgent: boolean;
+  title: string;
+  body: string;
+  notification_type: 'academic' | 'behavior' | 'payment' | 'general';
+  target_user_ids: number[];
+  data: string;
 }
 
 const notificationSchema = yup.object({
-  template_id: yup.string().required('Le modèle est requis'),
-  recipients: yup.string().required('Les destinataires sont requis'),
-  subject: yup.string().required('Le sujet est requis'),
-  content: yup.string().required('Le contenu est requis'),
-  type: yup.string().oneOf(['email', 'sms', 'notification']).required('Le type est requis'),
-  scheduled_for: yup.string().optional(),
-  is_urgent: yup.boolean().required()
+  title: yup.string().required('Le titre est requis'),
+  body: yup.string().required('Le contenu est requis'),
+  notification_type: yup.string().oneOf(['academic', 'behavior', 'payment', 'general']).required('Le type est requis'),
+  target_user_ids: yup.array().of(yup.number().required()).required(),
+  data: yup.string().default('')
 });
+
+const NOTIFICATION_TYPES = [
+  { value: 'academic', label: 'Academic Update', icon: <DescriptionIcon /> },
+  { value: 'behavior', label: 'Behavior Report', icon: <NotificationsIcon /> },
+  { value: 'payment', label: 'Payment Reminder', icon: <DescriptionIcon /> },
+  { value: 'general', label: 'General Announcement', icon: <NotificationsIcon /> }
+];
 
 const MESSAGE_TYPES = [
   { value: 'email', label: 'Email', icon: <EmailIcon /> },
@@ -111,6 +119,14 @@ const ParentCommunication: React.FC = () => {
   const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<MessageTemplate | null>(null);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  
+  const { school } = useAppSelector((state: any) => state.auth);
+  
+  // Fetch parents for the current school
+  const { data: parentsData, isLoading: isLoadingParents } = useGetParentsFromRelationshipsQuery({
+    page_size: 1000, // Get all parents for the school
+    school: school?.id // Filter by current school
+  });
 
   const [templates, setTemplates] = useState<MessageTemplate[]>([
     {
@@ -138,16 +154,21 @@ const ParentCommunication: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: '1',
-      template_id: '1',
-      recipients: ['parent1', 'parent2'],
-      subject: 'Rappel de paiement des frais scolaires',
-      content: 'Cher parent, veuillez noter que le paiement des frais scolaires est dû le 15 janvier 2024.',
-      type: 'email',
+      title: 'Test Notification',
+      body: 'This is a test notification',
+      type: 'notification',
+      notification_type: 'general',
+      target_user_ids: [1, 2],
+      recipients: [1, 2],
+      school: 'Test School',
+      data: '',
+      sent_via_fcm: false,
+      sent_via_email: false,
+      sent_via_sms: false,
       status: 'sent',
       sent_count: 2,
       failed_count: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      sent_at: '2024-01-01T10:00:00Z'
+      created_at: '2024-01-01T00:00:00Z'
     }
   ]);
 
@@ -160,13 +181,11 @@ const ParentCommunication: React.FC = () => {
     resolver: yupResolver(notificationSchema),
     mode: 'onChange',
     defaultValues: {
-      template_id: '',
-      recipients: '',
-      subject: '',
-      content: '',
-      type: 'email',
-      scheduled_for: '',
-      is_urgent: false
+      title: '',
+      body: '',
+      notification_type: 'general',
+      target_user_ids: [],
+      data: ''
     }
   });
 
@@ -202,23 +221,59 @@ const ParentCommunication: React.FC = () => {
 
   const onSubmitNotification = async (data: NotificationFormData) => {
     try {
+      const notificationData = {
+        title: data.title,
+        body: data.body,
+        notification_type: data.notification_type,
+        target_user_ids: data.target_user_ids || [],
+        school: school?.id || '',
+        data: data.data || ''
+      };
+  
+      console.log('Sending notification:', notificationData);
+      
+      // Send notification to API
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
+      const response = await fetch(`${baseUrl}/notifications/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify(notificationData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to send notification: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Notification sent successfully:', result);
+      
+      // Add the new notification to the list for demo purposes
       const newNotification: Notification = {
         id: Date.now().toString(),
-        template_id: data.template_id,
-        recipients: data.recipients.split(',').map(r => r.trim()),
-        subject: data.subject,
-        content: data.content,
-        type: data.type,
-        scheduled_for: data.scheduled_for,
-        status: data.scheduled_for ? 'scheduled' : 'draft',
-        sent_count: 0,
+        title: data.title,
+        body: data.body,
+        type: 'notification',
+        notification_type: data.notification_type,
+        target_user_ids: data.target_user_ids || [],
+        recipients: data.target_user_ids || [],
+        school: school?.id || 'Unknown School',
+        data: data.data || '',
+        sent_via_fcm: false,
+        sent_via_email: false,
+        sent_via_sms: false,
+        status: 'sent',
+        sent_count: data.target_user_ids?.length || 0,
         failed_count: 0,
         created_at: new Date().toISOString()
       };
+      
       setNotifications(prev => [...prev, newNotification]);
       handleCloseNotificationDialog();
     } catch (err) {
-      console.error('Failed to create notification:', err);
+      console.error('Failed to send notification:', err);
     }
   };
 
@@ -446,7 +501,7 @@ const ParentCommunication: React.FC = () => {
                       primary={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Typography variant="subtitle1">
-                            {notification.subject}
+                            {notification.title}
                           </Typography>
                           <Chip 
                             label={notification.status}
@@ -555,31 +610,29 @@ const ParentCommunication: React.FC = () => {
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Controller
-                  name="template_id"
+                  name="title"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth size="small" error={!!errors.template_id}>
-                      <InputLabel>Modèle</InputLabel>
-                      <Select {...field} label="Modèle">
-                        {templates.map((template) => (
-                          <MenuItem key={template.id} value={template.id}>
-                            {template.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Titre"
+                      error={!!errors.title}
+                      helperText={errors.title?.message}
+                      size="small"
+                    />
                   )}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Controller
-                  name="type"
+                  name="notification_type"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth size="small" error={!!errors.type}>
-                      <InputLabel>Type de Message</InputLabel>
-                      <Select {...field} label="Type de Message">
-                        {MESSAGE_TYPES.map((type) => (
+                    <FormControl fullWidth size="small" error={!!errors.notification_type}>
+                      <InputLabel>Type de Notification</InputLabel>
+                      <Select {...field} label="Type de Notification">
+                        {NOTIFICATION_TYPES.map((type) => (
                           <MenuItem key={type.value} value={type.value}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               {type.icon}
@@ -594,40 +647,7 @@ const ParentCommunication: React.FC = () => {
               </Grid>
               <Grid item xs={12}>
                 <Controller
-                  name="recipients"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Destinataires (IDs séparés par des virgules)"
-                      error={!!errors.recipients}
-                      helperText={errors.recipients?.message}
-                      size="small"
-                      placeholder="parent1, parent2, parent3"
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Controller
-                  name="subject"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Sujet"
-                      error={!!errors.subject}
-                      helperText={errors.subject?.message}
-                      size="small"
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Controller
-                  name="content"
+                  name="body"
                   control={control}
                   render={({ field }) => (
                     <TextField
@@ -636,46 +656,95 @@ const ParentCommunication: React.FC = () => {
                       label="Contenu"
                       multiline
                       rows={4}
-                      error={!!errors.content}
-                      helperText={errors.content?.message}
+                      error={!!errors.body}
+                      helperText={errors.body?.message}
                       size="small"
                     />
                   )}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  name="target_user_ids"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth size="small" error={!!errors.target_user_ids}>
+                      <InputLabel>Destinataires</InputLabel>
+                      <Select
+                        {...field}
+                        multiple
+                        label="Destinataires"
+                        value={field.value || []}
+                        onChange={(e) => {
+                          const selectedValues = e.target.value as number[];
+                          // If "all" is selected, select all parent IDs
+                          if (selectedValues.includes(-1)) {
+                            const allParentIds = parentsData?.results?.map(parent => parent.id) || [];
+                            field.onChange(allParentIds);
+                          } else {
+                            field.onChange(selectedValues);
+                          }
+                        }}
+                        renderValue={(selected) => {
+                          if (selected.length === 0) return 'Sélectionner des parents';
+                          if (selected.length === (parentsData?.results?.length || 0)) return 'Tous les parents';
+                          return `${selected.length} parent(s) sélectionné(s)`;
+                        }}
+                      >
+                        <MenuItem value={-1}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" fontWeight="bold">
+                              📢 Envoyer à tous les parents
+                            </Typography>
+                          </Box>
+                        </MenuItem>
+                        <Divider />
+                        {isLoadingParents ? (
+                          <MenuItem disabled>
+                            <Typography variant="body2">Chargement des parents...</Typography>
+                          </MenuItem>
+                        ) : parentsData?.results?.map((parent) => (
+                          <MenuItem key={parent.id} value={parent.id}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2">
+                                {parent.first_name} {parent.last_name}
+                              </Typography>
+                              {parent.children_count && (
+                                <Chip 
+                                  label={`${parent.children_count} enfant(s)`} 
+                                  size="small" 
+                                  variant="outlined"
+                                />
+                              )}
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.target_user_ids && (
+                        <Typography variant="caption" color="error">
+                          {errors.target_user_ids.message}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  )}
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <Controller
-                  name="scheduled_for"
+                  name="data"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="Programmer pour (optionnel)"
-                      type="datetime-local"
+                      label="Données supplémentaires (optionnel)"
                       size="small"
-                      InputLabelProps={{ shrink: true }}
+                      placeholder='{"key": "value"}'
                     />
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Controller
-                  name="is_urgent"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={field.value}
-                          onChange={field.onChange}
-                        />
-                      }
-                      label="Notification Urgente"
-                    />
-                  )}
-                />
-              </Grid>
+
             </Grid>
           </DialogContent>
           <DialogActions>
@@ -686,13 +755,12 @@ const ParentCommunication: React.FC = () => {
               type="submit"
               variant="contained"
               disabled={!isValid}
-              startIcon={<SendIcon />}
             >
               Envoyer
             </Button>
           </DialogActions>
         </form>
-      </Dialog>
+              </Dialog>
 
       {/* Create/Edit Template Dialog */}
       <Dialog open={openTemplateDialog} onClose={handleCloseTemplateDialog} maxWidth="md" fullWidth>
@@ -777,3 +845,4 @@ const ParentCommunication: React.FC = () => {
 };
 
 export default ParentCommunication;
+

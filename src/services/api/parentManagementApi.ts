@@ -44,14 +44,15 @@ export const parentManagementApi = createApi({
     // New endpoint: Get parents from relationships (more accurate for school filtering)
     getParentsFromRelationships: builder.query<
       { results: Parent[]; count: number },
-      { page?: number; page_size?: number; search?: string; status?: string }
+      { page?: number; page_size?: number; search?: string; status?: string; school?: string }
     >({
       query: (params) => ({
         url: 'parent-students/',
         params: {
           ...params,
           page: params.page || 1,
-          page_size: params.page_size || 20
+          page_size: params.page_size || 20,
+          ...(params.school && { school: params.school })
         }
       }),
       transformResponse: (response: { results: ParentStudentRelationship[]; count: number }) => {
