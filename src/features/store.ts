@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { authApi } from './auth/authApi';
 import { studentApi } from './students/studentApi';
+import { notificationsApi } from './notifications/notificationsApi';
 
 import { paymentApi } from '../services/api/paymentApi';
 import { academicApi } from '../services/api/academicApi';
@@ -22,6 +23,7 @@ export const store = configureStore({
     parentManagement: parentManagementReducer,
     [authApi.reducerPath]: authApi.reducer,
     [studentApi.reducerPath]: studentApi.reducer,
+    [notificationsApi.reducerPath]: notificationsApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
     [academicApi.reducerPath]: academicApi.reducer,
     [parentManagementApi.reducerPath]: parentManagementApi.reducer,
@@ -30,6 +32,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       authApi.middleware,
       studentApi.middleware,
+      notificationsApi.middleware,
       paymentApi.middleware,
       academicApi.middleware,
       parentManagementApi.middleware,

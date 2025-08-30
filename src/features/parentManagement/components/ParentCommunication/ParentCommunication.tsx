@@ -26,7 +26,8 @@ import {
   Tabs,
   Tab,
   IconButton,
-  Divider
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import {
   Send as SendIcon,
@@ -45,6 +46,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAppSelector } from '../../../../hooks/redux';
 import { useGetParentsFromRelationshipsQuery } from '../../../../services/api/parentManagementApi';
+import { useGetNotificationsQuery, useCreateNotificationMutation, Notification } from '../../../notifications/notificationsApi';
 
 interface MessageTemplate {
   id: string;
@@ -55,26 +57,6 @@ interface MessageTemplate {
   category: 'general' | 'academic' | 'emergency' | 'reminder';
   created_at: string;
   updated_at: string;
-}
-
-interface Notification {
-  id: string;
-  title: string;
-  body: string;
-  type: 'email' | 'sms' | 'notification';
-  notification_type: 'academic' | 'behavior' | 'payment' | 'general';
-  target_user_ids: number[];
-  recipients: number[];
-  school: string;
-  data: string;
-  sent_via_fcm: boolean;
-  sent_via_email: boolean;
-  sent_via_sms: boolean;
-  status: 'sent' | 'sending' | 'failed' | 'scheduled';
-  sent_count: number;
-  failed_count: number;
-  scheduled_for?: string;
-  created_at: string;
 }
 
 interface NotificationFormData {
@@ -128,6 +110,15 @@ const ParentCommunication: React.FC = () => {
     school: school?.id // Filter by current school
   });
 
+  // Fetch notifications for the current school
+  const { data: notificationsData, isLoading: isLoadingNotifications } = useGetNotificationsQuery({
+    school_id: school?.id,
+    page_size: 100
+  });
+
+  // Create notification mutation
+  const [createNotification, { isLoading: isCreatingNotification }] = useCreateNotificationMutation();
+
   const [templates, setTemplates] = useState<MessageTemplate[]>([
     {
       id: '1',
@@ -148,27 +139,6 @@ const ParentCommunication: React.FC = () => {
       category: 'emergency',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
-    }
-  ]);
-
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      title: 'Test Notification',
-      body: 'This is a test notification',
-      type: 'notification',
-      notification_type: 'general',
-      target_user_ids: [1, 2],
-      recipients: [1, 2],
-      school: 'Test School',
-      data: '',
-      sent_via_fcm: false,
-      sent_via_email: false,
-      sent_via_sms: false,
-      status: 'sent',
-      sent_count: 2,
-      failed_count: 0,
-      created_at: '2024-01-01T00:00:00Z'
     }
   ]);
 
@@ -232,45 +202,10 @@ const ParentCommunication: React.FC = () => {
   
       console.log('Sending notification:', notificationData);
       
-      // Send notification to API
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
-      const response = await fetch(`${baseUrl}/notifications/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify(notificationData)
-      });
+      // Use the RTK Query mutation to create notification
+      await createNotification(notificationData).unwrap();
       
-      if (!response.ok) {
-        throw new Error(`Failed to send notification: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      console.log('Notification sent successfully:', result);
-      
-      // Add the new notification to the list for demo purposes
-      const newNotification: Notification = {
-        id: Date.now().toString(),
-        title: data.title,
-        body: data.body,
-        type: 'notification',
-        notification_type: data.notification_type,
-        target_user_ids: data.target_user_ids || [],
-        recipients: data.target_user_ids || [],
-        school: school?.id || 'Unknown School',
-        data: data.data || '',
-        sent_via_fcm: false,
-        sent_via_email: false,
-        sent_via_sms: false,
-        status: 'sent',
-        sent_count: data.target_user_ids?.length || 0,
-        failed_count: 0,
-        created_at: new Date().toISOString()
-      };
-      
-      setNotifications(prev => [...prev, newNotification]);
+      console.log('Notification sent successfully');
       handleCloseNotificationDialog();
     } catch (err) {
       console.error('Failed to send notification:', err);
@@ -303,12 +238,19 @@ const ParentCommunication: React.FC = () => {
     }
   };
 
+  const getNotificationStatus = (notification: Notification) => {
+    if (notification.sent_at) return 'sent';
+    if (notification.sent_via_fcm || notification.sent_via_email || notification.sent_via_sms) return 'sending';
+    return 'pending';
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'sent': return 'success';
       case 'sending': return 'info';
       case 'failed': return 'error';
       case 'scheduled': return 'warning';
+      case 'pending': return 'default';
       default: return 'default';
     }
   };
@@ -319,9 +261,12 @@ const ParentCommunication: React.FC = () => {
       case 'sending': return <AccessTimeIcon />;
       case 'failed': return <AccessTimeIcon />;
       case 'scheduled': return <ScheduleIcon />;
+      case 'pending': return <AccessTimeIcon />;
       default: return <AccessTimeIcon />;
     }
   };
+
+  const notifications = notificationsData?.results || [];
 
   return (
     <Box>
@@ -373,7 +318,7 @@ const ParentCommunication: React.FC = () => {
                 Notifications Envoyées
               </Typography>
               <Typography variant="h4">
-                {notifications.filter(n => n.status === 'sent').length}
+                {notifications.filter(n => getNotificationStatus(n) === 'sent').length}
               </Typography>
             </CardContent>
           </Card>
@@ -385,7 +330,7 @@ const ParentCommunication: React.FC = () => {
                 En Cours
               </Typography>
               <Typography variant="h4">
-                {notifications.filter(n => n.status === 'sending').length}
+                {notifications.filter(n => getNotificationStatus(n) === 'sending').length}
               </Typography>
             </CardContent>
           </Card>
@@ -394,10 +339,10 @@ const ParentCommunication: React.FC = () => {
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>
-                Programmées
+                En Attente
               </Typography>
               <Typography variant="h4">
-                {notifications.filter(n => n.status === 'scheduled').length}
+                {notifications.filter(n => getNotificationStatus(n) === 'pending').length}
               </Typography>
             </CardContent>
           </Card>
@@ -490,55 +435,85 @@ const ParentCommunication: React.FC = () => {
         {/* Notifications Tab */}
         {activeTab === 1 && (
           <Box sx={{ p: 3 }}>
-            <List>
-              {notifications.map((notification) => (
-                <React.Fragment key={notification.id}>
-                  <ListItem>
-                    <ListItemIcon>
-                      {getStatusIcon(notification.status)}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="subtitle1">
-                            {notification.title}
-                          </Typography>
-                          <Chip 
-                            label={notification.status}
-                            color={getStatusColor(notification.status) as any}
-                            size="small"
-                          />
+            {isLoadingNotifications ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : notifications.length === 0 ? (
+              <Box sx={{ textAlign: 'center', p: 3 }}>
+                <Typography variant="h6" color="textSecondary" gutterBottom>
+                  Aucune notification trouvée
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Créez votre première notification pour commencer
+                </Typography>
+              </Box>
+            ) : (
+              <List>
+                {notifications.map((notification) => {
+                  const status = getNotificationStatus(notification);
+                  return (
+                    <React.Fragment key={notification.id}>
+                      <ListItem>
+                        <ListItemIcon>
+                          {getStatusIcon(status)}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="subtitle1">
+                                {notification.title}
+                              </Typography>
+                              <Chip 
+                                label={status}
+                                color={getStatusColor(status) as any}
+                                size="small"
+                              />
+                              <Chip 
+                                label={notification.notification_type}
+                                size="small"
+                                variant="outlined"
+                              />
+                            </Box>
+                          }
+                          secondary={
+                            <Box>
+                              <Typography variant="body2" color="textSecondary" gutterBottom>
+                                {notification.body}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                Destinataires: {notification.target_user_ids.length} | 
+                                Créé: {new Date(notification.created_at).toLocaleString()} |
+                                École: {notification.school_name}
+                              </Typography>
+                              {notification.sent_at && (
+                                <Typography variant="body2" color="textSecondary">
+                                  Envoyé: {new Date(notification.sent_at).toLocaleString()}
+                                </Typography>
+                              )}
+                              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                                {notification.sent_via_fcm && <Chip label="FCM" size="small" color="success" />}
+                                {notification.sent_via_email && <Chip label="Email" size="small" color="primary" />}
+                                {notification.sent_via_sms && <Chip label="SMS" size="small" color="info" />}
+                              </Box>
+                            </Box>
+                          }
+                        />
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <IconButton size="small" color="primary">
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton size="small" color="error">
+                            <DeleteIcon />
+                          </IconButton>
                         </Box>
-                      }
-                      secondary={
-                        <Box>
-                          <Typography variant="body2" color="textSecondary">
-                            Type: {MESSAGE_TYPES.find(t => t.value === notification.type)?.label} | 
-                            Destinataires: {notification.recipients.length} | 
-                            Envoyé: {notification.sent_count} | 
-                            Échecs: {notification.failed_count}
-                          </Typography>
-                          {notification.scheduled_for && (
-                            <Typography variant="body2" color="textSecondary">
-                              Programmé pour: {new Date(notification.scheduled_for).toLocaleString()}
-                            </Typography>
-                          )}
-                        </Box>
-                      }
-                    />
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <IconButton size="small" color="primary">
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton size="small" color="error">
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </List>
+                      </ListItem>
+                      <Divider />
+                    </React.Fragment>
+                  );
+                })}
+              </List>
+            )}
           </Box>
         )}
 
@@ -556,8 +531,8 @@ const ParentCommunication: React.FC = () => {
                       Statistiques par Type
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {MESSAGE_TYPES.map((type) => {
-                        const count = notifications.filter(n => n.type === type.value).length;
+                      {NOTIFICATION_TYPES.map((type) => {
+                        const count = notifications.filter(n => n.notification_type === type.value).length;
                         return (
                           <Box key={type.value} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -582,15 +557,21 @@ const ParentCommunication: React.FC = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2">Succès</Typography>
+                        <Typography variant="body2">Envoyées</Typography>
                         <Typography variant="body2" fontWeight="bold" color="success.main">
-                          {notifications.reduce((sum, n) => sum + n.sent_count, 0)}
+                          {notifications.filter(n => getNotificationStatus(n) === 'sent').length}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body2">Échecs</Typography>
-                        <Typography variant="body2" fontWeight="bold" color="error.main">
-                          {notifications.reduce((sum, n) => sum + n.failed_count, 0)}
+                        <Typography variant="body2">En cours</Typography>
+                        <Typography variant="body2" fontWeight="bold" color="info.main">
+                          {notifications.filter(n => getNotificationStatus(n) === 'sending').length}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="body2">En attente</Typography>
+                        <Typography variant="body2" fontWeight="bold" color="warning.main">
+                          {notifications.filter(n => getNotificationStatus(n) === 'pending').length}
                         </Typography>
                       </Box>
                     </Box>
@@ -754,13 +735,14 @@ const ParentCommunication: React.FC = () => {
             <Button
               type="submit"
               variant="contained"
-              disabled={!isValid}
+              disabled={!isValid || isCreatingNotification}
+              startIcon={isCreatingNotification ? <CircularProgress size={16} /> : <SendIcon />}
             >
-              Envoyer
+              {isCreatingNotification ? 'Envoi...' : 'Envoyer'}
             </Button>
           </DialogActions>
         </form>
-              </Dialog>
+      </Dialog>
 
       {/* Create/Edit Template Dialog */}
       <Dialog open={openTemplateDialog} onClose={handleCloseTemplateDialog} maxWidth="md" fullWidth>
