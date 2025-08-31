@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { authApi } from './auth/authApi';
 import { studentApi } from './students/studentApi';
 import { notificationsApi } from './notifications/notificationsApi';
+import { fileApi } from './files/services/fileApi';
 
 import { paymentApi } from '../services/api/paymentApi';
 import { academicApi } from '../services/api/academicApi';
@@ -13,6 +14,7 @@ import studentReducer from './students/studentSlice';
 import paymentReducer from './payments/paymentSlice';
 import academicReducer from './academics/academicSlice';
 import parentManagementReducer from './parentManagement/parentManagementSlice';
+import fileReducer from './files/fileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,9 +23,11 @@ export const store = configureStore({
     payments: paymentReducer,
     academics: academicReducer,
     parentManagement: parentManagementReducer,
+    files: fileReducer,
     [authApi.reducerPath]: authApi.reducer,
     [studentApi.reducerPath]: studentApi.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
+    [fileApi.reducerPath]: fileApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
     [academicApi.reducerPath]: academicApi.reducer,
     [parentManagementApi.reducerPath]: parentManagementApi.reducer,
@@ -33,6 +37,7 @@ export const store = configureStore({
       authApi.middleware,
       studentApi.middleware,
       notificationsApi.middleware,
+      fileApi.middleware,
       paymentApi.middleware,
       academicApi.middleware,
       parentManagementApi.middleware,
