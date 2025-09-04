@@ -58,11 +58,20 @@ export const formatPaymentType = (type: string): string => {
 /**
  * Format GPA for display
  */
-export const formatGPA = (gpa: number | null | undefined): string => {
+export const formatGPA = (gpa: number | string | null | undefined): string => {
   if (gpa === null || gpa === undefined) {
     return 'N/A';
   }
-  return gpa.toFixed(2);
+  
+  // Convert to number if it's a string
+  const numericGPA = typeof gpa === 'string' ? parseFloat(gpa) : gpa;
+  
+  // Check if it's a valid number
+  if (isNaN(numericGPA)) {
+    return 'N/A';
+  }
+  
+  return numericGPA.toFixed(2);
 };
 
 /**

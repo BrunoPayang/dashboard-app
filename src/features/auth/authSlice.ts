@@ -51,6 +51,10 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    clearInvalidSchoolData: (state) => {
+      localStorage.removeItem('school');
+      state.school = null;
+    },
     checkAuthStatus: (state) => {
       const token = localStorage.getItem('access_token');
       const userStr = localStorage.getItem('user');
@@ -58,10 +62,20 @@ const authSlice = createSlice({
       
       if (token && userStr) {
         try {
-          state.user = JSON.parse(userStr);
+          const user = JSON.parse(userStr);
+          state.user = user;
           state.isAuthenticated = true;
+          
+          // Only load school if it exists and has a valid ID (not 'default')
           if (schoolStr) {
-            state.school = JSON.parse(schoolStr);
+            const school = JSON.parse(schoolStr);
+            if (school && school.id && school.id !== 'default') {
+              state.school = school;
+            } else {
+              // Clear invalid school data
+              localStorage.removeItem('school');
+              state.school = null;
+            }
           }
         } catch (error) {
           state.user = null;
@@ -80,6 +94,7 @@ export const {
   setError,
   logout,
   clearError,
+  clearInvalidSchoolData,
   checkAuthStatus,
 } = authSlice.actions;
 

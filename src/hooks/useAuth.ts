@@ -27,22 +27,33 @@ export const useAuth = () => {
           localStorage.setItem('user', JSON.stringify(result.user));
           dispatch(setUser(result.user));
           
-          // For now, we'll create a default school since the User type doesn't include school info
-          // This should be updated when the backend provides school information
-          const schoolData = {
-            id: 'default',
-            name: 'École',
-            address: '',
-            city: '',
-            state: '',
-            zip_code: '',
-            phone: '',
-            email: '',
-            website: '',
-            logo: '',
-          };
-          localStorage.setItem('school', JSON.stringify(schoolData));
-          dispatch(setSchool(schoolData));
+          // For school staff and admin users, get school information
+          if (result.user.user_type === 'school_staff' || result.user.user_type === 'admin') {
+            // Get school_id from user data (it's called 'school' in the response)
+            const schoolId = result.user.school;
+            
+            if (schoolId) {
+              try {
+                const schoolResponse = await fetch(`http://localhost:8000/api/schools/${schoolId}/`, {
+                  headers: { 
+                    Authorization: `Bearer ${result.access}`,
+                    'Content-Type': 'application/json'
+                  }
+                });
+                if (schoolResponse.ok) {
+                  const schoolData = await schoolResponse.json();
+                  localStorage.setItem('school', JSON.stringify(schoolData));
+                  dispatch(setSchool(schoolData));
+                } else {
+                  console.error('Failed to fetch school data:', schoolResponse.status);
+                }
+              } catch (error) {
+                console.error('Failed to fetch school data:', error);
+              }
+            } else {
+              console.log('No school found for school staff user');
+            }
+          }
         }
         return true;
       }

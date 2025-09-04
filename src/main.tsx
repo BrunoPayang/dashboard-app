@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import App from './App';
 import { store } from './features/store';
-import { theme } from './styles/theme';
+import { DynamicThemeProvider } from './components/theme/DynamicThemeProvider';
+import './utils/clearInvalidData'; // Clear any invalid school data on startup
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,10 +16,10 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <ThemeProvider theme={theme}>
+        <DynamicThemeProvider>
           <CssBaseline />
           <App />
-        </ThemeProvider>
+        </DynamicThemeProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

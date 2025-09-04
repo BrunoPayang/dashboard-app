@@ -4,6 +4,7 @@ import { authApi } from './auth/authApi';
 import { studentApi } from './students/studentApi';
 import { notificationsApi } from './notifications/notificationsApi';
 import { fileApi } from './files/services/fileApi';
+import { schoolApi } from './school/schoolApi';
 
 import { paymentApi } from '../services/api/paymentApi';
 import { academicApi } from '../services/api/academicApi';
@@ -28,6 +29,7 @@ export const store = configureStore({
     [studentApi.reducerPath]: studentApi.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
     [fileApi.reducerPath]: fileApi.reducer,
+    [schoolApi.reducerPath]: schoolApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
     [academicApi.reducerPath]: academicApi.reducer,
     [parentManagementApi.reducerPath]: parentManagementApi.reducer,
@@ -38,6 +40,7 @@ export const store = configureStore({
       studentApi.middleware,
       notificationsApi.middleware,
       fileApi.middleware,
+      schoolApi.middleware,
       paymentApi.middleware,
       academicApi.middleware,
       parentManagementApi.middleware,

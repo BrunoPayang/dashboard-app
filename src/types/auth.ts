@@ -1,10 +1,26 @@
 export interface User {
-  id: string;
+  id: number;
   username: string;
   email: string;
   user_type: 'admin' | 'school_staff' | 'parent';
   first_name: string;
   last_name: string;
+  full_name: string;
+  school: string; // This is the school UUID
+  school_name: string;
+  phone: string;
+  profile_picture: string | null;
+  is_verified: boolean;
+  profile: {
+    address: string;
+    emergency_contact: string;
+    language_preference: string;
+    email_notifications: boolean;
+    sms_notifications: boolean;
+    push_notifications: boolean;
+  };
+  created_at: string;
+  updated_at: string;
 }
 
 export interface School {
@@ -18,6 +34,8 @@ export interface School {
   email: string;
   website?: string;
   logo?: string;
+  primary_color?: string;
+  secondary_color?: string;
 }
 
 export interface LoginRequest {

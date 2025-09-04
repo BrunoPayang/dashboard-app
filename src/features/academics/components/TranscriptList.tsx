@@ -219,20 +219,28 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                       label={
                         transcript.gpa === null || transcript.gpa === undefined
                           ? 'No Grade'
-                          : transcript.gpa >= 3.5 
-                            ? 'Excellent' 
-                            : transcript.gpa >= 2.5 
-                              ? 'Good' 
-                              : 'Fair'
+                          : (() => {
+                              const numericGPA = typeof transcript.gpa === 'string' ? parseFloat(transcript.gpa) : transcript.gpa;
+                              if (isNaN(numericGPA)) return 'No Grade';
+                              return numericGPA >= 3.5 
+                                ? 'Excellent' 
+                                : numericGPA >= 2.5 
+                                  ? 'Good' 
+                                  : 'Fair';
+                            })()
                       }
                       color={
                         transcript.gpa === null || transcript.gpa === undefined
                           ? 'default'
-                          : transcript.gpa >= 3.5 
-                            ? 'success' 
-                            : transcript.gpa >= 2.5 
-                              ? 'warning' 
-                              : 'error'
+                          : (() => {
+                              const numericGPA = typeof transcript.gpa === 'string' ? parseFloat(transcript.gpa) : transcript.gpa;
+                              if (isNaN(numericGPA)) return 'default';
+                              return numericGPA >= 3.5 
+                                ? 'success' 
+                                : numericGPA >= 2.5 
+                                  ? 'warning' 
+                                  : 'error';
+                            })()
                       }
                       size="small"
                     />

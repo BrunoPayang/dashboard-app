@@ -52,7 +52,7 @@ const CommunicationAnalytics: React.FC = () => {
   };
 
   const handleExportData = (format: 'csv' | 'excel' | 'pdf') => {
-    console.log(`Exporting data in ${format} format`);
+    console.log(`Exportation des données au format ${format}`);
   };
 
   const getDeliveryRateColor = (rate: number) => {
@@ -103,7 +103,7 @@ const CommunicationAnalytics: React.FC = () => {
           <Button
             variant="outlined"
             startIcon={<RefreshIcon />}
-            onClick={() => console.log('Refreshing analytics')}
+            onClick={() => console.log('Actualisation des analytics')}
           >
             Actualiser
           </Button>
@@ -197,7 +197,7 @@ const CommunicationAnalytics: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
                   <Typography color="textSecondary" gutterBottom>
-                    Total Notifications
+                    Total des Notifications
                   </Typography>
                   <Typography variant="h4" color="primary.main">
                     {analyticsData.totalNotifications.toLocaleString()}
@@ -216,7 +216,7 @@ const CommunicationAnalytics: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Paper sx={{ width: '100%' }}>
-        <Tabs value={activeTab} onChange={handleTabChange} aria-label="Analytics tabs">
+        <Tabs value={activeTab} onChange={handleTabChange} aria-label="Onglets d'analytics">
           <Tab label="Vue d'Ensemble" />
           <Tab label="Performance par Canal" />
           <Tab label="Tendances" />
