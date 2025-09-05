@@ -57,7 +57,9 @@ export interface CreateTranscriptRequest {
   academic_year: string;
   semester: string;
   gpa: number | null;
-  file_url?: string;
+  file_name: string;
+  file_url: string;
+  uploaded_by: number;
   notes?: string;
 }
 

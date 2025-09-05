@@ -20,7 +20,10 @@ import {
   useUpdateTranscriptMutation 
 } from '../../../services/api/academicApi';
 import { useGetStudentsQuery } from '../../students/studentApi';
+import { useGetFilesQuery } from '../../files/services/fileApi';
+import { useAuth } from '../../../hooks/useAuth';
 import type { Student } from '../../../types/student';
+import type { FileItem } from '../../files/types/file';
 
 import type { 
   TranscriptRecord, 
@@ -39,12 +42,17 @@ const schema = yup.object({
     .nullable()
     .min(0, 'La moyenne doit être d\'au moins 0.0')
     .max(4, 'La moyenne ne peut pas dépasser 4.0'),
-  file_url: yup.string().url('Doit être une URL valide').nullable(),
+  file_name: yup.string().required('Nom du fichier requis'),
+  file_url: yup.string().required('URL du fichier requise'),
+  uploaded_by: yup.number().required('Utilisateur requis'),
   notes: yup.string(),
 });
 
 type FormData = yup.InferType<typeof schema> & {
   student: string | number;
+  file_name: string;
+  file_url: string;
+  uploaded_by: number;
 };
 
 interface TranscriptFormProps {
@@ -69,6 +77,9 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
     page: 1,
     page_size: 1000, // Get all students for dropdown
   });
+  
+  const { data: filesData } = useGetFilesQuery({ page: 1, page_size: 1000 });
+  const { user } = useAuth();
 
   const currentYear = new Date().getFullYear();
   const academicYears = Array.from({ length: 10 }, (_, i) => {
@@ -77,12 +88,9 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
   });
 
   const semesters = [
-    { value: 'Fall', label: 'Fall Semester' },
-    { value: 'Spring', label: 'Spring Semester' },
-    { value: 'Summer', label: 'Summer Semester' },
-    { value: '1st Semester', label: '1st Semester' },
-    { value: '2nd Semester', label: '2nd Semester' },
-    { value: '3rd Semester', label: '3rd Semester' },
+    { value: 'first', label: 'Premier Semestre' },
+    { value: 'second', label: 'Deuxième Semestre' },
+    { value: 'annual', label: 'Rapport Annuel' },
   ];
 
   const {
@@ -95,9 +103,11 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
     defaultValues: {
       student: selectedStudentId || '',
       academic_year: `${currentYear}-${currentYear + 1}`,
-      semester: 'Fall',
+      semester: 'first',
       gpa: null,
+      file_name: 'Bulletin',
       file_url: '',
+      uploaded_by: user?.id || 0,
       notes: '',
     },
   });
@@ -109,29 +119,35 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         academic_year: transcript.academic_year,
         semester: transcript.semester,
         gpa: transcript.gpa,
+        file_name: 'Bulletin',
         file_url: transcript.file_url || '',
+        uploaded_by: user?.id || 0,
         notes: transcript.notes,
       });
     } else if (open && selectedStudentId) {
       reset({
         student: selectedStudentId,
         academic_year: `${currentYear}-${currentYear + 1}`,
-        semester: 'Fall',
+        semester: 'first',
         gpa: null,
+        file_name: 'Bulletin',
         file_url: '',
+        uploaded_by: user?.id || 0,
         notes: '',
       });
     } else if (open) {
       reset({
         student: '',
         academic_year: `${currentYear}-${currentYear + 1}`,
-        semester: 'Fall',
+        semester: 'first',
         gpa: null,
+        file_name: 'Bulletin',
         file_url: '',
+        uploaded_by: user?.id || 0,
         notes: '',
       });
     }
-  }, [open, transcript, selectedStudentId, reset, currentYear]);
+  }, [open, transcript, selectedStudentId, reset, currentYear, user?.id]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -157,9 +173,16 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
           academic_year: data.academic_year,
           semester: data.semester,
           gpa: data.gpa ?? null,
-          file_url: data.file_url || undefined,
+          file_name: data.file_name,
+          file_url: data.file_url,
+          uploaded_by: data.uploaded_by,
           notes: data.notes || '',
         };
+        
+        console.log('Creating transcript with data:', createData);
+        console.log('File URL being submitted:', data.file_url);
+        console.log('File URL type:', typeof data.file_url);
+        console.log('File URL length:', data.file_url?.length);
         
         await createTranscript(createData).unwrap();
       }
@@ -171,6 +194,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
       // Handle validation errors
       if (error?.status === 400 && error?.data) {
         console.error('Validation errors:', error.data);
+        console.error('Full error response:', JSON.stringify(error.data, null, 2));
       }
     }
   };
@@ -283,22 +307,63 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="file_name"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="File Name"
+                    fullWidth
+                    value="Bulletin"
+                    disabled
+                    error={!!errors.file_name}
+                    helperText={errors.file_name?.message || 'Automatically set to "Bulletin"'}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
               <Controller
                 name="file_url"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="File URL (Optional)"
+                    label="Select File"
+                    select
                     fullWidth
-                    placeholder="https://example.com/transcript.pdf"
                     error={!!errors.file_url}
-                    helperText={errors.file_url?.message || 'Link to transcript file'}
-                  />
+                    helperText={errors.file_url?.message || 'Select a file from the uploaded files'}
+                  >
+                    <MenuItem value="">Select a file</MenuItem>
+                    {filesData?.results.map((file: FileItem) => (
+                      <MenuItem key={file.id} value={file.firebase_url}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                            {file.original_name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {file.file_type} • {file.file_size_mb ? file.file_size_mb.toFixed(1) : 'Unknown'} MB • {file.uploaded_at ? new Date(file.uploaded_at).toLocaleDateString() : 'Unknown date'}
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 )}
               />
             </Grid>
+
+            {/* Hidden field for uploaded_by */}
+            <Controller
+              name="uploaded_by"
+              control={control}
+              render={({ field }) => (
+                <input type="hidden" {...field} />
+              )}
+            />
 
             <Grid item xs={12}>
               <Controller

@@ -79,9 +79,9 @@ const StudentForm: React.FC<StudentFormProps> = ({
   }
 
   const classLevels = [
-    'Pre-K', 'K', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th',
-    '9th', '10th', '11th', '12th', 'Licence 1', 'Licence 2', 'Licence 3',
-    'Master 1', 'Master 2'
+    'CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2', 
+    '6em', '5em', '4em', '3em', 
+    'Seconde', 'Premieree', 'Terminale'
   ];
 
   const sections = ['A', 'B', 'C', 'D', 'E', 'F'];
