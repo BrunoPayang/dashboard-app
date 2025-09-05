@@ -42,9 +42,9 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     rejectedFiles.forEach(({ file, errors }) => {
       errors.forEach((error: any) => {
         if (error.code === 'file-too-large') {
-          newErrors.push(`${file.name}: File size must be less than ${MAX_FILE_SIZE_MB}MB`);
+          newErrors.push(`${file.name}: La taille du fichier doit être inférieure à ${MAX_FILE_SIZE_MB}MB`);
         } else if (error.code === 'file-invalid-type') {
-          newErrors.push(`${file.name}: File type not supported`);
+          newErrors.push(`${file.name}: Type de fichier non supporté`);
         } else {
           newErrors.push(`${file.name}: ${error.message}`);
         }
@@ -54,10 +54,10 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     // Validate accepted files
     acceptedFiles.forEach(file => {
       if (!validateFileSize(file)) {
-        newErrors.push(`${file.name}: File size must be less than ${MAX_FILE_SIZE_MB}MB`);
+        newErrors.push(`${file.name}: La taille du fichier doit être inférieure à ${MAX_FILE_SIZE_MB}MB`);
       }
       if (!validateFileType(file)) {
-        newErrors.push(`${file.name}: File type not supported`);
+        newErrors.push(`${file.name}: Type de fichier non supporté`);
       }
     });
 
@@ -96,7 +96,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
       {/* File Type Selection */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle2" gutterBottom>
-          File Type:
+          Type de Fichier :
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           {FILE_TYPES.map((type) => (
@@ -143,15 +143,15 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         
         <Typography variant="h6" gutterBottom>
           {isDragActive 
-            ? 'Drop files here...' 
-            : 'Drag & drop files here, or click to select'
+            ? 'Déposez les fichiers ici...' 
+            : 'Glissez-déposez les fichiers ici, ou cliquez pour sélectionner'
           }
         </Typography>
         
         <Typography variant="body2" color="textSecondary">
-          {multiple ? 'Multiple files allowed' : 'Single file only'} • 
-          Max size: {MAX_FILE_SIZE_MB}MB • 
-          Supported formats: PDF, DOC, DOCX, TXT, Images, etc.
+          {multiple ? 'Fichiers multiples autorisés' : 'Un seul fichier'} • 
+          Taille max: {MAX_FILE_SIZE_MB}MB • 
+          Formats supportés: PDF, DOC, DOCX, TXT, Images, etc.
         </Typography>
 
         {!isDragActive && (
@@ -184,7 +184,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         >
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Upload Errors:
+              Erreurs de Téléchargement :
             </Typography>
             {errors.map((error, index) => (
               <Typography key={index} variant="body2">

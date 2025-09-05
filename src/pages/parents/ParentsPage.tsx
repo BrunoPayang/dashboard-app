@@ -5,8 +5,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  Paper,
-  Alert
+  Paper
 } from '@mui/material';
 import {
   People as PeopleIcon,
@@ -67,11 +66,6 @@ const ParentsPage: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* Info Alert */}
-      <Alert severity="info" sx={{ mb: 3 }}>
-        <strong>Phase 5 en cours d'implémentation :</strong> Cette page est en cours de développement. 
-        Certaines fonctionnalités peuvent ne pas être encore disponibles.
-      </Alert>
 
       {/* Tabs Navigation */}
       <Paper sx={{ width: '100%', mb: 3 }}>

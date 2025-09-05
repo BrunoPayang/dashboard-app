@@ -79,11 +79,31 @@ export interface SchoolConfigurationResponse {
 export interface SchoolStatistics {
   total_students: number;
   class_distribution: Array<{
-    class_level: string;
+    class_assigned__level: string | null;
     count: number;
   }>;
+  class_details: Array<{
+    id: string;
+    name: string;
+    level: string;
+    section: string;
+    full_name: string;
+    academic_year: string;
+    max_students: number;
+    student_count: number;
+    available_spots: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  }>;
+  class_statistics: {
+    total_classes: number;
+    active_classes: number;
+    total_capacity: number;
+    utilization_rate: number;
+  };
   gender_distribution: Array<{
-    gender: 'M' | 'F';
+    gender: 'male' | 'female';
     count: number;
   }>;
   recent_enrollments: number;

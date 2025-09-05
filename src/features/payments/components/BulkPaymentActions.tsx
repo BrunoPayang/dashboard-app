@@ -62,15 +62,15 @@ const BulkPaymentActions: React.FC<BulkPaymentActionsProps> = ({
           onSuccess();
         }
       } else {
-        const errorMessage = `Updated ${result.successCount} payments, ${result.errorCount} failed`;
+        const errorMessage = `${result.successCount} paiements mis à jour, ${result.errorCount} échecs`;
         if (onError) {
           onError(errorMessage);
         }
       }
     } catch (error) {
-      console.error('Failed to mark payments as paid:', error);
+      console.error('Échec du marquage des paiements comme payés:', error);
       if (onError) {
-        onError('Failed to update payment records');
+        onError('Échec de la mise à jour des enregistrements de paiement');
       }
     }
   };
@@ -95,7 +95,7 @@ const BulkPaymentActions: React.FC<BulkPaymentActionsProps> = ({
           onClick={handleMarkAsPaidClick}
           disabled={selectedPayments.length === 0}
         >
-          Mark as Paid ({selectedPayments.length})
+          Marquer comme Payé ({selectedPayments.length})
         </Button>
       </Box>
 
@@ -107,16 +107,16 @@ const BulkPaymentActions: React.FC<BulkPaymentActionsProps> = ({
         fullWidth
       >
         <DialogTitle>
-          Mark {selectedPayments.length} Payment{selectedPayments.length > 1 ? 's' : ''} as Paid
+          Marquer {selectedPayments.length} Paiement{selectedPayments.length > 1 ? 's' : ''} comme Payé
         </DialogTitle>
         
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            This will mark all selected payment records as paid with today's date.
+            Cela marquera tous les enregistrements de paiement sélectionnés comme payés avec la date d'aujourd'hui.
           </Typography>
 
           <TextField
-            label="Payment Method"
+            label="Méthode de Paiement"
             select
             fullWidth
             value={paymentMethod}
@@ -131,27 +131,27 @@ const BulkPaymentActions: React.FC<BulkPaymentActionsProps> = ({
           </TextField>
 
           <TextField
-            label="Reference Number (Optional)"
+            label="Numéro de Référence (Optionnel)"
             fullWidth
             value={referenceNumber}
             onChange={(e) => setReferenceNumber(e.target.value)}
-            placeholder="e.g., TXN123456789"
+            placeholder="ex: TXN123456789"
             sx={{ mb: 2 }}
           />
 
           <TextField
-            label="Receipt URL (Optional)"
+            label="URL du Reçu (Optionnel)"
             fullWidth
             value={receiptUrl}
             onChange={(e) => setReceiptUrl(e.target.value)}
             placeholder="https://example.com/receipt.pdf"
-            helperText="Link to receipt or payment confirmation"
+            helperText="Lien vers le reçu ou la confirmation de paiement"
           />
         </DialogContent>
         
         <DialogActions>
           <Button onClick={handleDialogClose}>
-            Cancel
+            Annuler
           </Button>
           <Button
             onClick={handleMarkAsPaidConfirm}
@@ -159,7 +159,7 @@ const BulkPaymentActions: React.FC<BulkPaymentActionsProps> = ({
             disabled={isLoading}
             startIcon={isLoading ? <CircularProgress size={20} /> : <PaymentIcon />}
           >
-            {isLoading ? 'Processing...' : 'Mark as Paid'}
+            {isLoading ? 'Traitement...' : 'Marquer comme Payé'}
           </Button>
         </DialogActions>
       </Dialog>

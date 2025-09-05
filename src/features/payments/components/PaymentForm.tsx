@@ -167,7 +167,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       } else {
         // Ensure student is not empty
         if (!data.student) {
-          console.error('Student field is required');
+          console.error('Le champ étudiant est requis');
           return;
         }
         
@@ -187,11 +187,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       
       onClose();
     } catch (error: any) {
-      console.error('Failed to save payment:', error);
+      console.error('Échec de la sauvegarde du paiement:', error);
       
       // Handle validation errors
       if (error?.status === 400 && error?.data) {
-        console.error('Validation errors:', error.data);
+        console.error('Erreurs de validation:', error.data);
         // You could set form errors here if needed
         // For now, we'll just log them
       }
@@ -371,7 +371,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                       {...field}
                       label="Numéro de Référence"
                       fullWidth
-                      placeholder="e.g., TXN123456789"
+                      placeholder="ex: TXN123456789"
                     />
                   )}
                 />
@@ -409,7 +409,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                     multiline
                     rows={3}
                     fullWidth
-                    placeholder="Additional information about this payment..."
+                    placeholder="Informations supplémentaires sur ce paiement..."
                   />
                 )}
               />

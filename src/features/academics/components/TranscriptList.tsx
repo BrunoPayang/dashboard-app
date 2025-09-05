@@ -102,7 +102,7 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
               <TableCell padding="checkbox">
                 <Skeleton variant="rectangular" width={20} height={20} />
               </TableCell>
-              {['Student', 'Academic Year', 'Semester', 'GPA', 'Upload Date', 'Actions'].map((header) => (
+              {['Étudiant', 'Année Académique', 'Semestre', 'Moyenne', 'Date de Téléchargement', 'Actions'].map((header) => (
                 <TableCell key={header}>
                   <Skeleton variant="text" width="80%" />
                 </TableCell>
@@ -131,7 +131,7 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
   if (error) {
     return (
       <Alert severity="error">
-        Failed to load transcript records. Please try again.
+        Échec du chargement des enregistrements de relevé de notes. Veuillez réessayer.
       </Alert>
     );
   }
@@ -141,10 +141,10 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <School sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
         <Typography variant="h6" color="text.secondary">
-          No transcript records found
+          Aucun enregistrement de relevé de notes trouvé
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Try adjusting your filters or upload a new transcript.
+          Essayez d'ajuster vos filtres ou téléchargez un nouveau relevé de notes.
         </Typography>
       </Paper>
     );
@@ -167,12 +167,12 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                   onChange={handleSelectAllClick}
                 />
               </TableCell>
-              <TableCell>Student</TableCell>
-              <TableCell>Academic Year</TableCell>
-              <TableCell>Semester</TableCell>
-              <TableCell>GPA</TableCell>
-              <TableCell>Upload Date</TableCell>
-              <TableCell>File</TableCell>
+              <TableCell>Étudiant</TableCell>
+              <TableCell>Année Académique</TableCell>
+              <TableCell>Semestre</TableCell>
+              <TableCell>Moyenne</TableCell>
+              <TableCell>Date de Téléchargement</TableCell>
+              <TableCell>Fichier</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -194,17 +194,17 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2" fontWeight="medium">
-                    {transcript.student_name || 'Unknown Student'}
+                    {transcript.student_name || 'Étudiant Inconnu'}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2">
-                    {transcript.academic_year || 'Unknown Year'}
+                    {transcript.academic_year || 'Année Inconnue'}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Chip
-                    label={transcript.semester || 'Unknown'}
+                    label={transcript.semester || 'Inconnu'}
                     color="primary"
                     variant="outlined"
                     size="small"
@@ -218,15 +218,15 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                     <Chip
                       label={
                         transcript.gpa === null || transcript.gpa === undefined
-                          ? 'No Grade'
+                          ? 'Pas de Note'
                           : (() => {
                               const numericGPA = typeof transcript.gpa === 'string' ? parseFloat(transcript.gpa) : transcript.gpa;
-                              if (isNaN(numericGPA)) return 'No Grade';
+                              if (isNaN(numericGPA)) return 'Pas de Note';
                               return numericGPA >= 3.5 
                                 ? 'Excellent' 
                                 : numericGPA >= 2.5 
-                                  ? 'Good' 
-                                  : 'Fair';
+                                  ? 'Bien' 
+                                  : 'Passable';
                             })()
                       }
                       color={
@@ -248,10 +248,10 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2">
-                    {transcript.upload_date ? formatDate(transcript.upload_date) : 'No date'}
+                    {transcript.upload_date ? formatDate(transcript.upload_date) : 'Pas de date'}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    by {transcript.uploaded_by_name || 'Unknown'}
+                    par {transcript.uploaded_by_name || 'Inconnu'}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -261,11 +261,11 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
                       startIcon={<Download />}
                       onClick={() => handleDownload(transcript)}
                     >
-                      Download
+                      Télécharger
                     </Button>
                   ) : (
                     <Typography variant="body2" color="text.secondary">
-                      No file
+                      Pas de fichier
                     </Typography>
                   )}
                 </TableCell>
@@ -307,7 +307,7 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
           handleMenuClose();
         }}>
           <Visibility sx={{ mr: 2 }} />
-          View Details
+          Voir les Détails
         </MenuItem>
         
         <MenuItem onClick={() => {
@@ -315,13 +315,13 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
           handleMenuClose();
         }}>
           <Edit sx={{ mr: 2 }} />
-          Edit Transcript
+          Modifier le Relevé
         </MenuItem>
         
         {selectedTranscript?.file_url && (
           <MenuItem onClick={() => selectedTranscript && handleDownload(selectedTranscript)}>
             <Download sx={{ mr: 2 }} />
-            Download File
+            Télécharger le Fichier
           </MenuItem>
         )}
         
@@ -333,7 +333,7 @@ const TranscriptList: React.FC<TranscriptListProps> = ({
           sx={{ color: 'error.main' }}
         >
           <Delete sx={{ mr: 2 }} />
-          Delete Transcript
+          Supprimer le Relevé
         </MenuItem>
       </Menu>
     </>

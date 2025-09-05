@@ -124,7 +124,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
   if (error) {
     return (
       <Alert severity="error">
-        Failed to load payment records. Please try again.
+        Échec du chargement des enregistrements de paiement. Veuillez réessayer.
       </Alert>
     );
   }
@@ -134,10 +134,10 @@ const PaymentList: React.FC<PaymentListProps> = ({
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <PaymentIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
         <Typography variant="h6" color="text.secondary">
-          No payment records found
+          Aucun enregistrement de paiement trouvé
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Try adjusting your filters or create a new payment record.
+          Essayez d'ajuster vos filtres ou créez un nouvel enregistrement de paiement.
         </Typography>
       </Paper>
     );
@@ -160,12 +160,12 @@ const PaymentList: React.FC<PaymentListProps> = ({
                   onChange={handleSelectAllClick}
                 />
               </TableCell>
-              <TableCell>Student</TableCell>
-              <TableCell>Amount</TableCell>
+              <TableCell>Étudiant</TableCell>
+              <TableCell>Montant</TableCell>
               <TableCell>Type</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Due Date</TableCell>
-              <TableCell>Days Overdue</TableCell>
+              <TableCell>Statut</TableCell>
+              <TableCell>Date d'Échéance</TableCell>
+              <TableCell>Jours de Retard</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -191,7 +191,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
                   </Typography>
                   {payment.reference_number && (
                     <Typography variant="caption" color="text.secondary">
-                      Ref: {payment.reference_number}
+                      Réf: {payment.reference_number}
                     </Typography>
                   )}
                 </TableCell>
@@ -217,14 +217,14 @@ const PaymentList: React.FC<PaymentListProps> = ({
                   </Typography>
                   {payment.paid_date && (
                     <Typography variant="caption" color="text.secondary">
-                      Paid: {formatDate(payment.paid_date)}
+                      Payé: {formatDate(payment.paid_date)}
                     </Typography>
                   )}
                 </TableCell>
                 <TableCell>
                   {payment.days_overdue > 0 ? (
                     <Chip
-                      label={`${payment.days_overdue} days`}
+                      label={`${payment.days_overdue} jours`}
                       color="error"
                       size="small"
                     />
@@ -272,7 +272,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
           handleMenuClose();
         }}>
           <Edit sx={{ mr: 2 }} />
-          Edit Payment
+          Modifier le Paiement
         </MenuItem>
         
         {selectedPayment?.status === 'pending' && (
@@ -281,7 +281,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
             handleMenuClose();
           }}>
             <PaymentIcon sx={{ mr: 2 }} />
-            Mark as Paid
+            Marquer comme Payé
           </MenuItem>
         )}
         
@@ -293,7 +293,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
             handleMenuClose();
           }}>
             <Receipt sx={{ mr: 2 }} />
-            View Receipt
+            Voir le Reçu
           </MenuItem>
         )}
         
@@ -305,7 +305,7 @@ const PaymentList: React.FC<PaymentListProps> = ({
           sx={{ color: 'error.main' }}
         >
           <Delete sx={{ mr: 2 }} />
-          Delete Payment
+          Supprimer le Paiement
         </MenuItem>
       </Menu>
     </>

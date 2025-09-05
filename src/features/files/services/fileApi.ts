@@ -4,7 +4,7 @@ import { FileItem, FileUpdateData, FilesResponse } from '../types/file';
 export const fileApi = createApi({
   reducerPath: 'fileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -24,7 +24,7 @@ export const fileApi = createApi({
       is_public?: boolean;
     }>({
       query: (params) => ({
-        url: '/api/files/',
+        url: '/files/',
         params: {
           page: params.page || 1,
           page_size: params.page_size || 20,
@@ -38,14 +38,14 @@ export const fileApi = createApi({
 
     // Get single file details
     getFile: builder.query<FileItem, string>({
-      query: (id) => `/api/files/${id}/`,
+      query: (id) => `/files/${id}/`,
       providesTags: (result, error, id) => [{ type: 'File', id }],
     }),
 
     // Upload file
     uploadFile: builder.mutation<FileItem, FormData>({
       query: (formData) => ({
-        url: '/api/files/',
+        url: '/files/',
         method: 'POST',
         body: formData,
         // Don't set Content-Type header, let the browser set it with boundary
@@ -56,7 +56,7 @@ export const fileApi = createApi({
     // Update file metadata
     updateFile: builder.mutation<FileItem, { id: string; updates: FileUpdateData }>({
       query: ({ id, updates }) => ({
-        url: `/api/files/${id}/`,
+        url: `/files/${id}/`,
         method: 'PATCH',
         body: updates,
       }),
@@ -66,7 +66,7 @@ export const fileApi = createApi({
     // Delete file
     deleteFile: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/files/${id}/`,
+        url: `/files/${id}/`,
         method: 'DELETE',
       }),
       invalidatesTags: ['File'],
@@ -75,7 +75,7 @@ export const fileApi = createApi({
     // Bulk delete files
     bulkDeleteFiles: builder.mutation<void, string[]>({
       query: (fileIds) => ({
-        url: '/api/files/bulk-delete/',
+        url: '/files/bulk-delete/',
         method: 'POST',
         body: { file_ids: fileIds },
       }),

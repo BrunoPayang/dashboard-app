@@ -16,12 +16,12 @@ import { PAYMENT_TYPES, PAYMENT_STATUSES } from '../../../types/payment';
 import type { PaymentType, PaymentStatus } from '../../../types/payment';
 
 const paymentTypeOptions = [
-  { value: '' as PaymentType | '', label: 'All Types' },
+  { value: '' as PaymentType | '', label: 'Tous les Types' },
   ...PAYMENT_TYPES,
 ];
 
 const paymentStatusOptions = [
-  { value: '' as PaymentStatus | '', label: 'All Status' },
+  { value: '' as PaymentStatus | '', label: 'Tous les Statuts' },
   ...PAYMENT_STATUSES,
 ];
 
@@ -42,7 +42,7 @@ const PaymentFilters: React.FC = () => {
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6">Filter Payments</Typography>
+        <Typography variant="h6">Filtrer les Paiements</Typography>
         {hasActiveFilters && (
           <IconButton onClick={handleClearFilters} size="small">
             <Clear />
@@ -53,11 +53,11 @@ const PaymentFilters: React.FC = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <TextField
-            label="Search"
+            label="Rechercher"
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
             fullWidth
-            placeholder="Search by student name or reference..."
+            placeholder="Rechercher par nom d'étudiant ou référence..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -70,7 +70,7 @@ const PaymentFilters: React.FC = () => {
         
         <Grid item xs={12} md={4}>
           <TextField
-            label="Payment Type"
+            label="Type de Paiement"
             value={filters.payment_type}
             onChange={(e) => handleFilterChange('payment_type', e.target.value)}
             select
@@ -86,7 +86,7 @@ const PaymentFilters: React.FC = () => {
         
         <Grid item xs={12} md={4}>
           <TextField
-            label="Status"
+            label="Statut"
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
             select

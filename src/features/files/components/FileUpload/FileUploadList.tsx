@@ -104,7 +104,7 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Files to Upload ({files.length})
+        Fichiers à Télécharger ({files.length})
       </Typography>
 
       {fileData.map((data, index) => (
@@ -127,10 +127,10 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
 
                 {/* File Type Selection */}
                 <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                  <InputLabel>File Type</InputLabel>
+                  <InputLabel>Type de Fichier</InputLabel>
                   <Select
                     value={data.file_type}
-                    label="File Type"
+                    label="Type de Fichier"
                     onChange={(e) => handleFileTypeChange(index, e.target.value as FileType)}
                   >
                     {FILE_TYPES.map((type) => (
@@ -148,7 +148,7 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
                 <TextField
                   fullWidth
                   size="small"
-                  label="Description (optional)"
+                  label="Description (optionnel)"
                   value={data.description}
                   onChange={(e) => handleDescriptionChange(index, e.target.value)}
                   sx={{ mb: 2 }}
@@ -158,10 +158,10 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
                 <TextField
                   fullWidth
                   size="small"
-                  label="Tags (optional)"
+                  label="Étiquettes (optionnel)"
                   value={data.tags}
                   onChange={(e) => handleTagsChange(index, e.target.value)}
-                  placeholder="academic, transcript, 2024"
+                  placeholder="académique, relevé, 2024"
                   sx={{ mb: 2 }}
                 />
 
@@ -174,7 +174,7 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
                       size="small"
                     />
                   }
-                  label="Make file public"
+                  label="Rendre le fichier public"
                 />
               </Box>
 
@@ -198,7 +198,7 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
           onClick={onCancel}
           disabled={uploading}
         >
-          Cancel
+          Annuler
         </Button>
         <Button
           variant="contained"
@@ -206,7 +206,7 @@ const FileUploadList: React.FC<FileUploadListProps> = ({
           disabled={uploading || files.length === 0}
           startIcon={<DescriptionIcon />}
         >
-          {uploading ? 'Uploading...' : `Upload ${files.length} File${files.length !== 1 ? 's' : ''}`}
+          {uploading ? 'Téléchargement...' : `Télécharger ${files.length} Fichier${files.length !== 1 ? 's' : ''}`}
         </Button>
       </Box>
     </Box>

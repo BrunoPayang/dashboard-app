@@ -31,15 +31,15 @@ import type {
 
 const schema = yup.object({
   student: yup.mixed<string | number>()
-    .required('Student is required')
-    .test('not-empty', 'Please select a student', (value) => {
+    .required('Étudiant requis')
+    .test('not-empty', 'Veuillez sélectionner un étudiant', (value) => {
       return value !== '' && value !== null && value !== undefined;
     }),
-  report_type: yup.string().required('Report type is required'),
-  title: yup.string().required('Title is required').max(200, 'Title too long'),
-  description: yup.string().required('Description is required'),
-  incident_date: yup.string().required('Incident date is required'),
-  severity: yup.string().required('Severity is required'),
+  report_type: yup.string().required('Type de rapport requis'),
+  title: yup.string().required('Titre requis').max(200, 'Titre trop long'),
+  description: yup.string().required('Description requise'),
+  incident_date: yup.string().required('Date de l\'incident requise'),
+  severity: yup.string().required('Gravité requise'),
   action_taken: yup.string(),
   follow_up_required: yup.boolean(),
   follow_up_date: yup.string().nullable(),
@@ -73,15 +73,15 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
   });
 
   const reportTypes = [
-    { value: 'positive', label: 'Positive Behavior' },
-    { value: 'negative', label: 'Negative Behavior' },
-    { value: 'neutral', label: 'Neutral Observation' },
+    { value: 'positive', label: 'Comportement Positif' },
+    { value: 'negative', label: 'Comportement Négatif' },
+    { value: 'neutral', label: 'Observation Neutre' },
   ];
 
   const severityLevels = [
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' },
+    { value: 'low', label: 'Faible' },
+    { value: 'medium', label: 'Moyen' },
+    { value: 'high', label: 'Élevé' },
   ];
 
   const {
@@ -165,7 +165,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
       } else {
         // Ensure student is not empty
         if (!data.student) {
-          console.error('Student field is required');
+          console.error('Le champ étudiant est requis');
           return;
         }
         
@@ -186,11 +186,11 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
       
       onClose();
     } catch (error: any) {
-      console.error('Failed to save behavior report:', error);
+      console.error('Échec de la sauvegarde du rapport de comportement:', error);
       
       // Handle validation errors
       if (error?.status === 400 && error?.data) {
-        console.error('Validation errors:', error.data);
+        console.error('Erreurs de validation:', error.data);
       }
     }
   };
@@ -199,7 +199,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogTitle>
-          {isEditing ? 'Edit Behavior Report' : 'Create Behavior Report'}
+          {isEditing ? 'Modifier le Rapport de Comportement' : 'Créer un Rapport de Comportement'}
         </DialogTitle>
         
         <DialogContent>
@@ -211,14 +211,14 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Student"
+                    label="Étudiant"
                     select
                     fullWidth
                     error={!!errors.student}
                     helperText={errors.student?.message}
                     disabled={isEditing}
                   >
-                    <MenuItem value="">Select a student</MenuItem>
+                    <MenuItem value="">Sélectionner un étudiant</MenuItem>
                     {studentsData?.results.map((student: Student) => (
                       <MenuItem key={student.id} value={student.id}>
                         {student.first_name} {student.last_name}
@@ -236,7 +236,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Report Type"
+                    label="Type de Rapport"
                     select
                     fullWidth
                     error={!!errors.report_type}
@@ -259,11 +259,11 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Title"
+                    label="Titre"
                     fullWidth
                     error={!!errors.title}
                     helperText={errors.title?.message}
-                    placeholder="Brief title for the behavior report"
+                    placeholder="Titre bref pour le rapport de comportement"
                   />
                 )}
               />
@@ -282,7 +282,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                     fullWidth
                     error={!!errors.description}
                     helperText={errors.description?.message}
-                    placeholder="Detailed description of the behavior or incident..."
+                    placeholder="Description détaillée du comportement ou de l'incident..."
                   />
                 )}
               />
@@ -295,7 +295,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Incident Date"
+                    label="Date de l'Incident"
                     type="date"
                     fullWidth
                     InputLabelProps={{ shrink: true }}
@@ -313,7 +313,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Severity"
+                    label="Gravité"
                     select
                     fullWidth
                     error={!!errors.severity}
@@ -336,11 +336,11 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Action Taken (Optional)"
+                    label="Action Entreprise (Optionnel)"
                     multiline
                     rows={3}
                     fullWidth
-                    placeholder="Describe any actions taken in response to this incident..."
+                    placeholder="Décrivez toute action entreprise en réponse à cet incident..."
                   />
                 )}
               />
@@ -358,7 +358,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                         onChange={field.onChange}
                       />
                     }
-                    label="Follow-up Required"
+                    label="Suivi Requis"
                   />
                 )}
               />
@@ -372,7 +372,7 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Follow-up Date"
+                      label="Date de Suivi"
                       type="date"
                       fullWidth
                       InputLabelProps={{ shrink: true }}
@@ -387,24 +387,24 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
           {/* Severity Guide */}
           <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
-              Severity Guide:
+              Guide de Gravité :
             </Typography>
             <Box display="flex" flexDirection="column" gap={1}>
               <Typography variant="body2" color="info.main">
-                <strong>Low:</strong> Minor incidents, positive behaviors
+                <strong>Faible :</strong> Incidents mineurs, comportements positifs
               </Typography>
               <Typography variant="body2" color="warning.main">
-                <strong>Medium:</strong> Moderate concerns requiring attention
+                <strong>Moyen :</strong> Préoccupations modérées nécessitant une attention
               </Typography>
               <Typography variant="body2" color="error.main">
-                <strong>High:</strong> Serious incidents requiring immediate intervention
+                <strong>Élevé :</strong> Incidents graves nécessitant une intervention immédiate
               </Typography>
             </Box>
           </Box>
         </DialogContent>
         
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>Annuler</Button>
           <Button
             type="submit"
             variant="contained"
@@ -412,8 +412,8 @@ const BehaviorReportForm: React.FC<BehaviorReportFormProps> = ({
             startIcon={(isCreating || isUpdating) && <CircularProgress size={20} />}
           >
             {isCreating || isUpdating 
-              ? (isEditing ? 'Updating...' : 'Creating...') 
-              : (isEditing ? 'Update Report' : 'Create Report')}
+              ? (isEditing ? 'Mise à jour...' : 'Création...') 
+              : (isEditing ? 'Mettre à Jour le Rapport' : 'Créer le Rapport')}
           </Button>
         </DialogActions>
       </form>

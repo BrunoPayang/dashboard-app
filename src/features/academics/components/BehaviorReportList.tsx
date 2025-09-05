@@ -132,7 +132,7 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
               <TableCell padding="checkbox">
                 <Skeleton variant="rectangular" width={20} height={20} />
               </TableCell>
-              {['Student', 'Report Type', 'Title', 'Severity', 'Date', 'Actions'].map((header) => (
+              {['Étudiant', 'Type de Rapport', 'Titre', 'Gravité', 'Date', 'Actions'].map((header) => (
                 <TableCell key={header}>
                   <Skeleton variant="text" width="80%" />
                 </TableCell>
@@ -161,7 +161,7 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
   if (error) {
     return (
       <Alert severity="error">
-        Failed to load behavior reports. Please try again.
+        Échec du chargement des rapports de comportement. Veuillez réessayer.
       </Alert>
     );
   }
@@ -171,10 +171,10 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <Assignment sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
         <Typography variant="h6" color="text.secondary">
-          No behavior reports found
+          Aucun rapport de comportement trouvé
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Try adjusting your filters or create a new behavior report.
+          Essayez d'ajuster vos filtres ou créez un nouveau rapport de comportement.
         </Typography>
       </Paper>
     );
@@ -197,12 +197,12 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
                   onChange={handleSelectAllClick}
                 />
               </TableCell>
-              <TableCell>Student</TableCell>
+              <TableCell>Étudiant</TableCell>
               <TableCell>Type</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Severity</TableCell>
+              <TableCell>Titre</TableCell>
+              <TableCell>Gravité</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Follow-up</TableCell>
+              <TableCell>Suivi</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -224,14 +224,14 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2" fontWeight="medium">
-                    {report.student_name || 'Unknown Student'}
+                    {report.student_name || 'Étudiant Inconnu'}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center" gap={1}>
                     {getReportTypeIcon(report.report_type)}
                     <Chip
-                      label={report.report_type?.toUpperCase() || 'UNKNOWN'}
+                      label={report.report_type?.toUpperCase() || 'INCONNU'}
                       color={getReportTypeColor(report.report_type) as any}
                       size="small"
                     />
@@ -239,15 +239,15 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2" fontWeight="medium">
-                    {report.title || 'Untitled Report'}
+                    {report.title || 'Rapport Sans Titre'}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    by {report.reported_by_name || 'Unknown'}
+                    par {report.reported_by_name || 'Inconnu'}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Chip
-                    label={report.severity?.toUpperCase() || 'UNKNOWN'}
+                    label={report.severity?.toUpperCase() || 'INCONNUE'}
                     color={getSeverityColor(report.severity) as any}
                     size="small"
                     variant="outlined"
@@ -255,10 +255,10 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2">
-                    {report.incident_date ? formatDate(report.incident_date) : 'No date'}
+                    {report.incident_date ? formatDate(report.incident_date) : 'Pas de date'}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {report.created_at ? getRelativeTime(report.created_at) : 'Unknown'}
+                    {report.created_at ? getRelativeTime(report.created_at) : 'Inconnu'}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -266,12 +266,12 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
                     <Box display="flex" alignItems="center" gap={1}>
                       <Warning color="warning" fontSize="small" />
                       <Typography variant="body2" color="warning.main">
-                        {report.follow_up_date ? formatDate(report.follow_up_date) : 'Required'}
+                        {report.follow_up_date ? formatDate(report.follow_up_date) : 'Requis'}
                       </Typography>
                     </Box>
                   ) : (
                     <Typography variant="body2" color="text.secondary">
-                      None
+Aucun
                     </Typography>
                   )}
                 </TableCell>
@@ -313,7 +313,7 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
           handleMenuClose();
         }}>
           <Visibility sx={{ mr: 2 }} />
-          View Details
+          Voir les Détails
         </MenuItem>
         
         <MenuItem onClick={() => {
@@ -321,7 +321,7 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
           handleMenuClose();
         }}>
           <Edit sx={{ mr: 2 }} />
-          Edit Report
+          Modifier le Rapport
         </MenuItem>
         
         <MenuItem 
@@ -332,7 +332,7 @@ const BehaviorReportList: React.FC<BehaviorReportListProps> = ({
           sx={{ color: 'error.main' }}
         >
           <Delete sx={{ mr: 2 }} />
-          Delete Report
+          Supprimer le Rapport
         </MenuItem>
       </Menu>
     </>

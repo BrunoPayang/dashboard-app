@@ -103,12 +103,12 @@ const AcademicsPage: React.FC = () => {
   };
 
   const handleDeleteTranscript = async (transcriptId: number) => {
-    if (window.confirm('Are you sure you want to delete this transcript record?')) {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement de relevé de notes ?')) {
       try {
         await deleteTranscript(transcriptId).unwrap();
-        showSnackbar('Transcript record deleted successfully', 'success');
+        showSnackbar('Enregistrement de relevé de notes supprimé avec succès', 'success');
       } catch (error) {
-        showSnackbar('Failed to delete transcript record', 'error');
+        showSnackbar('Échec de la suppression de l\'enregistrement de relevé de notes', 'error');
       }
     }
   };
@@ -130,12 +130,12 @@ const AcademicsPage: React.FC = () => {
   };
 
   const handleDeleteBehaviorReport = async (reportId: number) => {
-    if (window.confirm('Are you sure you want to delete this behavior report?')) {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rapport de comportement ?')) {
       try {
         await deleteBehaviorReport(reportId).unwrap();
-        showSnackbar('Behavior report deleted successfully', 'success');
+        showSnackbar('Rapport de comportement supprimé avec succès', 'success');
       } catch (error) {
-        showSnackbar('Failed to delete behavior report', 'error');
+        showSnackbar('Échec de la suppression du rapport de comportement', 'error');
       }
     }
   };
@@ -243,10 +243,10 @@ const AcademicsPage: React.FC = () => {
         <Box textAlign="center" py={8}>
           <Analytics sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
-            Academic Statistics Coming Soon
+            Statistiques Académiques Bientôt Disponibles
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            This section will show comprehensive academic analytics and reports.
+            Cette section affichera des analyses académiques complètes et des rapports.
           </Typography>
         </Box>
       </TabPanel>

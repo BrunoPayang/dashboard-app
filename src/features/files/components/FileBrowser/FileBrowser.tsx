@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -7,7 +7,6 @@ import {
   IconButton,
   Tooltip,
   Alert,
-  CircularProgress,
   Pagination,
   FormControl,
   Select,
@@ -16,7 +15,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  DialogContentText
+  DialogContentText,
+  TextField,
+  InputAdornment,
+  Skeleton,
+  Card,
+  CardContent
 } from '@mui/material';
 import {
   ViewList as ViewListIcon,
@@ -26,7 +30,10 @@ import {
   Download as DownloadIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
+  Search as SearchIcon,
+  FilterList as FilterListIcon,
+  Clear as ClearIcon
 } from '@mui/icons-material';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/redux';
 import { 
@@ -73,12 +80,26 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     is_public: filters.is_public
   });
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('FileBrowser Debug:', {
+      isLoading,
+      error,
+      filesData,
+      pagination,
+      filters,
+      apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'
+    });
+  }, [isLoading, error, filesData, pagination, filters]);
+
   const [deleteFile] = useDeleteFileMutation();
   const [updateFile] = useUpdateFileMutation();
 
   // Local state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState(filters.search || '');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   // Handle pagination
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -110,12 +131,23 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   };
 
+  // Handle search
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Debounce search to avoid too many API calls
+    const timeoutId = setTimeout(() => {
+      dispatch(setFilters({ ...filters, search: query }));
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [dispatch, filters]);
+
   // Handle filters
   const handleFiltersChange = useCallback((newFilters: FiltersType) => {
     dispatch(setFilters(newFilters));
   }, [dispatch]);
 
   const handleClearFilters = useCallback(() => {
+    setSearchQuery('');
     dispatch(clearFilters());
   }, [dispatch]);
 
@@ -146,13 +178,13 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
       await Promise.all(updatePromises);
       dispatch(clearFileSelection());
     } catch (error) {
-      console.error('Failed to update files:', error);
+      console.error('Échec de la mise à jour des fichiers:', error);
     }
   };
 
   const handleBulkDownload = () => {
     // TODO: Implement bulk download
-    console.log('Bulk download:', selectedFiles);
+    console.log('Téléchargement en lot:', selectedFiles);
   };
 
   // Handle individual file actions
@@ -160,7 +192,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     try {
       await deleteFile(fileId);
     } catch (error) {
-      console.error('Failed to delete file:', error);
+      console.error('Échec de la suppression du fichier:', error);
     }
   };
 
@@ -168,7 +200,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     try {
       await updateFile({ id: fileId, updates: { is_public: isPublic } });
     } catch (error) {
-      console.error('Failed to update file:', error);
+      console.error('Échec de la mise à jour du fichier:', error);
     }
   };
 
@@ -180,40 +212,60 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
       dispatch(clearFileSelection());
       setDeleteDialogOpen(false);
     } catch (error) {
-      console.error('Failed to delete files:', error);
+      console.error('Échec de la suppression des fichiers:', error);
     }
   };
 
-  // Sort files
-  const sortedFiles = filesData?.results ? [...filesData.results].sort((a, b) => {
-    let aValue: any, bValue: any;
+  // Memoized sorted files for better performance
+  const sortedFiles = useMemo(() => {
+    if (!filesData?.results) return [];
+    
+    return [...filesData.results].sort((a, b) => {
+      let aValue: any, bValue: any;
 
-    switch (sortBy) {
-      case 'original_name':
-        aValue = a.original_name.toLowerCase();
-        bValue = b.original_name.toLowerCase();
-        break;
-      case 'file_size_mb':
-        aValue = a.file_size_mb || 0;
-        bValue = b.file_size_mb || 0;
-        break;
-      case 'file_type':
-        aValue = a.file_type;
-        bValue = b.file_type;
-        break;
-      case 'uploaded_at':
-      default:
-        aValue = new Date(a.uploaded_at);
-        bValue = new Date(b.uploaded_at);
-        break;
-    }
+      switch (sortBy) {
+        case 'original_name':
+          aValue = a.original_name.toLowerCase();
+          bValue = b.original_name.toLowerCase();
+          break;
+        case 'file_size_mb':
+          aValue = a.file_size_mb || 0;
+          bValue = b.file_size_mb || 0;
+          break;
+        case 'file_type':
+          aValue = a.file_type || '';
+          bValue = b.file_type || '';
+          break;
+        case 'uploaded_at':
+        default:
+          aValue = new Date(a.uploaded_at).getTime();
+          bValue = new Date(b.uploaded_at).getTime();
+          break;
+      }
 
-    if (sortOrder === 'asc') {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  }) : [];
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [filesData?.results, sortBy, sortOrder]);
+
+  // Loading skeleton component
+  const FileSkeleton = () => (
+    <Card sx={{ mb: 2 }}>
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Skeleton variant="rectangular" width={40} height={40} />
+          <Box sx={{ flex: 1 }}>
+            <Skeleton variant="text" width="60%" height={24} />
+            <Skeleton variant="text" width="40%" height={20} />
+          </Box>
+          <Skeleton variant="rectangular" width={100} height={32} />
+        </Box>
+      </CardContent>
+    </Card>
+  );
 
   // Update pagination when data changes
   React.useEffect(() => {
@@ -228,9 +280,66 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
   }, [filesData, dispatch, pagination.pageSize]);
 
   if (error) {
+    // RTK Query error structure
+    let errorMessage = 'Erreur inconnue';
+    
+    if ('data' in error) {
+      // Server error with data
+      errorMessage = (error.data as any)?.message || (error.data as any)?.detail || 'Erreur du serveur';
+    } else if ('status' in error) {
+      // HTTP error
+      const status = error.status;
+      if (typeof status === 'number') {
+        switch (status) {
+          case 401:
+            errorMessage = 'Erreur 401: Non autorisé';
+            break;
+          case 403:
+            errorMessage = 'Erreur 403: Accès refusé';
+            break;
+          case 404:
+            errorMessage = 'Erreur 404: Fichiers non trouvés';
+            break;
+          case 500:
+            errorMessage = 'Erreur 500: Erreur du serveur';
+            break;
+          default:
+            errorMessage = `Erreur ${status}: Erreur de connexion`;
+        }
+      } else {
+        // RTK Query error types
+        switch (status) {
+          case 'FETCH_ERROR':
+            errorMessage = 'Erreur de connexion: Impossible de joindre le serveur';
+            break;
+          case 'TIMEOUT_ERROR':
+            errorMessage = 'Erreur de délai d\'attente: Le serveur met trop de temps à répondre';
+            break;
+          case 'CUSTOM_ERROR':
+            errorMessage = 'Erreur personnalisée';
+            break;
+          default:
+            errorMessage = `Erreur ${status}`;
+        }
+      }
+    }
+
     return (
       <Alert severity="error" sx={{ mb: 2 }}>
-        Failed to load files: {error instanceof Error ? error.message : 'Unknown error'}
+        <Typography variant="h6" gutterBottom>
+          Échec du chargement des fichiers
+        </Typography>
+        <Typography variant="body2">
+          {errorMessage}
+        </Typography>
+        <Button 
+          variant="outlined" 
+          onClick={() => refetch()} 
+          sx={{ mt: 1 }}
+          startIcon={<RefreshIcon />}
+        >
+          Réessayer
+        </Button>
       </Alert>
     );
   }
@@ -239,19 +348,56 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
     <Box>
       {/* Header with Controls */}
       <Paper sx={{ p: 2, mb: 3 }}>
+        {/* Search Bar */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <TextField
+            fullWidth
+            placeholder="Rechercher des fichiers..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: searchQuery && (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleSearchChange('')}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            size="small"
+          />
+          
+          <Button
+            variant="outlined"
+            startIcon={<FilterListIcon />}
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            size="small"
+          >
+            Filtres
+          </Button>
+        </Box>
+
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h6">
-            File Browser ({filesData?.count || 0} files)
+            Navigateur de Fichiers ({filesData?.count || 0} fichiers)
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Tooltip title="Refresh">
+            <Tooltip title="Actualiser">
               <IconButton onClick={() => refetch()} disabled={isLoading}>
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="List View">
+            <Tooltip title="Vue Liste">
               <IconButton
                 onClick={() => dispatch(setViewMode('list'))}
                 color={viewMode === 'list' ? 'primary' : 'default'}
@@ -260,7 +406,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Grid View">
+            <Tooltip title="Vue Grille">
               <IconButton
                 onClick={() => dispatch(setViewMode('grid'))}
                 color={viewMode === 'grid' ? 'primary' : 'default'}
@@ -275,14 +421,14 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SortIcon fontSize="small" color="action" />
-            <Typography variant="body2" color="textSecondary">Sort by:</Typography>
+            <Typography variant="body2" color="textSecondary">Trier par :</Typography>
           </Box>
 
           {[
-            { value: 'uploaded_at', label: 'Upload Date' },
-            { value: 'original_name', label: 'File Name' },
-            { value: 'file_size_mb', label: 'File Size' },
-            { value: 'file_type', label: 'File Type' }
+            { value: 'uploaded_at', label: 'Date de Téléchargement' },
+            { value: 'original_name', label: 'Nom du Fichier' },
+            { value: 'file_size_mb', label: 'Taille du Fichier' },
+            { value: 'file_type', label: 'Type de Fichier' }
           ].map((option) => (
             <Button
               key={option.value}
@@ -317,7 +463,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography variant="subtitle1">
-                {selectedFiles.length} file(s) selected
+                {selectedFiles.length} fichier(s) sélectionné(s)
               </Typography>
               
               <Button
@@ -325,7 +471,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                 variant="outlined"
                 onClick={handleSelectAll}
               >
-                {selectedFiles.length === filesData?.results.length ? 'Deselect All' : 'Select All'}
+                {selectedFiles.length === filesData?.results.length ? 'Tout Désélectionner' : 'Tout Sélectionner'}
               </Button>
             </Box>
 
@@ -336,7 +482,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                 startIcon={<DownloadIcon />}
                 onClick={handleBulkDownload}
               >
-                Download Selected
+                Télécharger Sélectionnés
               </Button>
 
               <Button
@@ -345,7 +491,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                 startIcon={<VisibilityIcon />}
                 onClick={() => handleBulkTogglePublic(true)}
               >
-                Make Public
+                Rendre Public
               </Button>
 
               <Button
@@ -354,7 +500,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                 startIcon={<VisibilityOffIcon />}
                 onClick={() => handleBulkTogglePublic(false)}
               >
-                Make Private
+                Rendre Privé
               </Button>
 
               <Button
@@ -364,7 +510,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                 startIcon={<DeleteIcon />}
                 onClick={handleBulkDelete}
               >
-                Delete Selected
+                Supprimer Sélectionnés
               </Button>
             </Box>
           </Box>
@@ -373,18 +519,20 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {/* File List */}
       {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+        <Box>
+          {[...Array(5)].map((_, index) => (
+            <FileSkeleton key={index} />
+          ))}
         </Box>
       ) : sortedFiles.length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="textSecondary" gutterBottom>
-            No files found
+            Aucun fichier trouvé
           </Typography>
           <Typography variant="body2" color="textSecondary">
             {Object.keys(filters).length > 0 
-              ? 'Try adjusting your filters or search terms'
-              : 'Upload your first file to get started'
+              ? 'Essayez d\'ajuster vos filtres ou termes de recherche'
+              : 'Téléchargez votre premier fichier pour commencer'
             }
           </Typography>
         </Paper>
@@ -393,8 +541,9 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
           {/* Files Grid/List */}
           <Box sx={{ 
             display: viewMode === 'grid' ? 'grid' : 'block',
-            gridTemplateColumns: viewMode === 'grid' ? 'repeat(auto-fill, minmax(400px, 1fr))' : '1fr',
-            gap: 2
+            gridTemplateColumns: viewMode === 'grid' ? 'repeat(auto-fill, minmax(350px, 1fr))' : '1fr',
+            gap: 2,
+            minHeight: '400px' // Prevent layout shift
           }}>
             {sortedFiles.map((file) => (
               <FileCard
@@ -416,20 +565,22 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Typography variant="body2" color="textSecondary">
-                    Showing {((pagination.currentPage - 1) * pagination.pageSize) + 1} to{' '}
-                    {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of{' '}
-                    {pagination.totalCount} files
+                    Affichage de {((pagination.currentPage - 1) * pagination.pageSize) + 1} à{' '}
+                    {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} sur{' '}
+                    {pagination.totalCount} fichiers
                   </Typography>
 
-                  <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <FormControl size="small" sx={{ minWidth: 100 }}>
                     <Select
                       value={pagination.pageSize}
                       onChange={handlePageSizeChange}
                     >
-                      <MenuItem value={10}>10</MenuItem>
-                      <MenuItem value={20}>20</MenuItem>
-                      <MenuItem value={50}>50</MenuItem>
-                      <MenuItem value={100}>100</MenuItem>
+                      <MenuItem value={10}>10 par page</MenuItem>
+                      <MenuItem value={20}>20 par page</MenuItem>
+                      <MenuItem value={50}>50 par page</MenuItem>
+                      <MenuItem value={100}>100 par page</MenuItem>
+                      <MenuItem value={200}>200 par page</MenuItem>
+                      <MenuItem value={500}>500 par page</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -441,6 +592,9 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
                   showFirstButton
                   showLastButton
                   color="primary"
+                  size="small"
+                  siblingCount={1}
+                  boundaryCount={1}
                 />
               </Box>
             </Paper>
@@ -450,17 +604,17 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Confirmer la Suppression</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete {filesToDelete.length} selected file(s)? 
-            This action cannot be undone.
+            Êtes-vous sûr de vouloir supprimer {filesToDelete.length} fichier(s) sélectionné(s) ? 
+            Cette action ne peut pas être annulée.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Annuler</Button>
           <Button onClick={handleConfirmDelete} color="error" variant="contained">
-            Delete
+            Supprimer
           </Button>
         </DialogActions>
       </Dialog>

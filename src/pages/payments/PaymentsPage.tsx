@@ -59,25 +59,25 @@ const PaymentsPage: React.FC = () => {
         },
       }).unwrap();
       
-      showSnackbar('Payment marked as paid successfully', 'success');
+      showSnackbar('Paiement marqué comme payé avec succès', 'success');
     } catch (error) {
-      showSnackbar('Failed to update payment status', 'error');
+      showSnackbar('Échec de la mise à jour du statut du paiement', 'error');
     }
   };
 
   const handleDeletePayment = async (paymentId: number) => {
-    if (window.confirm('Are you sure you want to delete this payment record?')) {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement de paiement ?')) {
       try {
         await deletePayment(paymentId).unwrap();
-        showSnackbar('Payment record deleted successfully', 'success');
+        showSnackbar('Enregistrement de paiement supprimé avec succès', 'success');
       } catch (error) {
-        showSnackbar('Failed to delete payment record', 'error');
+        showSnackbar('Échec de la suppression de l\'enregistrement de paiement', 'error');
       }
     }
   };
 
   const handleBulkSuccess = () => {
-    showSnackbar(`${selectedPayments.length} payments marked as paid successfully`, 'success');
+    showSnackbar(`${selectedPayments.length} paiements marqués comme payés avec succès`, 'success');
   };
 
   const handleBulkError = (error: string) => {
@@ -129,7 +129,7 @@ const PaymentsPage: React.FC = () => {
         <Paper sx={{ mb: 2 }}>
           <Toolbar>
             <Chip
-              label={`${selectedPayments.length} selected`}
+              label={`${selectedPayments.length} sélectionné(s)`}
               color="primary"
               sx={{ mr: 2 }}
             />

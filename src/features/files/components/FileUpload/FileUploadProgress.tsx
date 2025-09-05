@@ -52,11 +52,11 @@ const FileUploadProgress: React.FC<FileUploadProgressProps> = ({
   const getStatusText = () => {
     switch (progress.status) {
       case 'completed':
-        return 'Upload Complete';
+        return 'Téléchargement Terminé';
       case 'error':
-        return 'Upload Failed';
+        return 'Échec du Téléchargement';
       default:
-        return 'Uploading...';
+        return 'Téléchargement...';
     }
   };
 
@@ -109,14 +109,14 @@ const FileUploadProgress: React.FC<FileUploadProgressProps> = ({
               sx={{ height: 6, borderRadius: 3 }}
             />
             <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, display: 'block' }}>
-              {progress.progress}% complete
+              {progress.progress}% terminé
             </Typography>
           </Box>
         )}
 
         {progress.status === 'error' && progress.error && (
           <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
-            Error: {progress.error}
+            Erreur: {progress.error}
           </Typography>
         )}
       </CardContent>
@@ -140,7 +140,7 @@ const FileUploadProgressList: React.FC<FileUploadProgressListProps> = ({
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Upload Progress ({progressList.length})
+        Progrès du Téléchargement ({progressList.length})
       </Typography>
       {progressList.map((progress) => (
         <FileUploadProgress

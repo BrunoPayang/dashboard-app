@@ -20,6 +20,7 @@ import {
   Visibility as ViewIcon,
 } from '@mui/icons-material';
 import { useGetStudentsQuery } from '../studentApi';
+import { useGetClassesForDropdownQuery } from '../../classes/classApi';
 import { Student, StudentFilters } from '../../../types/student';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../features/store';
@@ -50,7 +51,20 @@ const StudentList: React.FC<StudentListProps> = ({
     ...filters,
     schoolId: school?.id || ''
   });
+
+  // Fetch classes for displaying class names
+  const { data: classes = [] } = useGetClassesForDropdownQuery({
+    school: school?.id,
+    is_active: true
+  });
   
+  // Helper function to get class information
+  const getClassInfo = (classAssignedId?: string) => {
+    if (!classAssignedId) return { name: 'Non assigné', section: '-' };
+    const classInfo = classes.find(cls => cls.id === classAssignedId);
+    return classInfo ? { name: classInfo.name, section: classInfo.section } : { name: 'Classe inconnue', section: '-' };
+  };
+
   // Debug logging
   console.log('StudentList - filters:', filters);
   console.log('StudentList - school:', school);
@@ -183,17 +197,17 @@ const StudentList: React.FC<StudentListProps> = ({
 
   if (error) {
     // Extract meaningful error message from RTK Query error
-    let errorMessage = 'Failed to load students. Please try again.';
+    let errorMessage = 'Échec du chargement des étudiants. Veuillez réessayer.';
     
     if (error && typeof error === 'object') {
       if ('status' in error) {
         // RTK Query error with status
         if (error.status === 'FETCH_ERROR') {
-          errorMessage = 'Network error. Please check your connection.';
+          errorMessage = 'Erreur réseau. Veuillez vérifier votre connexion.';
         } else if (error.status === 'PARSING_ERROR') {
-          errorMessage = 'Data parsing error. Please contact support.';
+          errorMessage = 'Erreur d\'analyse des données. Veuillez contacter le support.';
         } else if (error.status === 'TIMEOUT_ERROR') {
-          errorMessage = 'Request timeout. Please try again.';
+          errorMessage = 'Délai d\'attente dépassé. Veuillez réessayer.';
         } else if (error.status === 'CUSTOM_ERROR') {
           errorMessage = error.error || errorMessage;
         }
@@ -204,7 +218,7 @@ const StudentList: React.FC<StudentListProps> = ({
         if (typeof error.data === 'string') {
           // Check if this is ngrok HTML content
           if (error.data.includes('<!DOCTYPE html>') && error.data.includes('ngrok')) {
-            errorMessage = 'ngrok is blocking the request. Please visit the ngrok URL first to whitelist it.';
+            errorMessage = 'ngrok bloque la requête. Veuillez d\'abord visiter l\'URL ngrok pour l\'autoriser.';
           } else {
             errorMessage = error.data;
           }
@@ -226,7 +240,7 @@ const StudentList: React.FC<StudentListProps> = ({
     return (
       <Box p={2}>
         <Typography color="error" variant="body1">
-          Error loading students: {errorMessage}
+          Erreur lors du chargement des étudiants : {errorMessage}
         </Typography>
       </Box>
     );
@@ -238,14 +252,14 @@ const StudentList: React.FC<StudentListProps> = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Student ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Class</TableCell>
+              <TableCell>ID Étudiant</TableCell>
+              <TableCell>Nom</TableCell>
+              <TableCell>Classe</TableCell>
               <TableCell>Section</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>School</TableCell>
-              <TableCell>Enrollment Date</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Genre</TableCell>
+              <TableCell>École</TableCell>
+              <TableCell>Date d'Inscription</TableCell>
+              <TableCell>Statut</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -290,11 +304,26 @@ const StudentList: React.FC<StudentListProps> = ({
                         {student.first_name} {student.last_name}
                       </Typography>
                     </TableCell>
-                    <TableCell>{student.class_level}</TableCell>
-                    <TableCell>{student.section}</TableCell>
+                    <TableCell>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
+                          {student.class_assigned ? getClassInfo(student.class_assigned).name : student.class_level || 'Non assigné'}
+                        </Typography>
+                        {student.class_assigned && (
+                          <Typography variant="caption" color="textSecondary">
+                            {getClassInfo(student.class_assigned).name} - {getClassInfo(student.class_assigned).section}
+                          </Typography>
+                        )}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {student.class_assigned ? getClassInfo(student.class_assigned).section : student.section || '-'}
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Chip
-                        label={student.gender}
+                        label={student.gender === 'male' ? 'Masculin' : student.gender === 'female' ? 'Féminin' : 'Autre'}
                         size="small"
                         variant="outlined"
                       />
@@ -303,7 +332,7 @@ const StudentList: React.FC<StudentListProps> = ({
                     <TableCell>{formatDate(student.enrollment_date)}</TableCell>
                     <TableCell>
                       <Chip
-                        label={student.is_active ? 'Active' : 'Inactive'}
+                        label={student.is_active ? 'Actif' : 'Inactif'}
                         color={getStatusColor(student.is_active)}
                         size="small"
                       />
@@ -346,9 +375,9 @@ const StudentList: React.FC<StudentListProps> = ({
           rowsPerPage={pageSize}
           onRowsPerPageChange={handlePageSizeChange}
           rowsPerPageOptions={[5, 10, 25, 50]}
-          labelRowsPerPage="Rows per page:"
+          labelRowsPerPage="Lignes par page :"
           labelDisplayedRows={({ from, to, count }) =>
-            `${from}-${to} of ${count !== -1 ? count : `more than ${to}`}`
+            `${from}-${to} sur ${count !== -1 ? count : `plus de ${to}`}`
           }
         />
       )}

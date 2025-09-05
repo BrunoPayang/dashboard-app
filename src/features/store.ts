@@ -5,6 +5,7 @@ import { studentApi } from './students/studentApi';
 import { notificationsApi } from './notifications/notificationsApi';
 import { fileApi } from './files/services/fileApi';
 import { schoolApi } from './school/schoolApi';
+import { classApi } from './classes/classApi';
 
 import { paymentApi } from '../services/api/paymentApi';
 import { academicApi } from '../services/api/academicApi';
@@ -16,6 +17,7 @@ import paymentReducer from './payments/paymentSlice';
 import academicReducer from './academics/academicSlice';
 import parentManagementReducer from './parentManagement/parentManagementSlice';
 import fileReducer from './files/fileSlice';
+import classReducer from './classes/classSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,11 +27,13 @@ export const store = configureStore({
     academics: academicReducer,
     parentManagement: parentManagementReducer,
     files: fileReducer,
+    classes: classReducer,
     [authApi.reducerPath]: authApi.reducer,
     [studentApi.reducerPath]: studentApi.reducer,
     [notificationsApi.reducerPath]: notificationsApi.reducer,
     [fileApi.reducerPath]: fileApi.reducer,
     [schoolApi.reducerPath]: schoolApi.reducer,
+    [classApi.reducerPath]: classApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
     [academicApi.reducerPath]: academicApi.reducer,
     [parentManagementApi.reducerPath]: parentManagementApi.reducer,
@@ -41,6 +45,7 @@ export const store = configureStore({
       notificationsApi.middleware,
       fileApi.middleware,
       schoolApi.middleware,
+      classApi.middleware,
       paymentApi.middleware,
       academicApi.middleware,
       parentManagementApi.middleware,

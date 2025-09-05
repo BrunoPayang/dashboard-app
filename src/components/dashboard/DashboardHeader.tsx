@@ -110,7 +110,7 @@ const DashboardHeader: React.FC = () => {
           <Box display="flex" alignItems="center" gap={1}>
             <AdminIcon sx={{ color: 'rgba(255,255,255,0.8)' }} />
             <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              School Staff
+              Personnel Scolaire
             </Typography>
           </Box>
           

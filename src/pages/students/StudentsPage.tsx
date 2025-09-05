@@ -46,7 +46,7 @@ const StudentsPage: React.FC = () => {
     return (
       <Box p={3}>
         <Typography color="error" variant="h6">
-          School information not available. Please contact your administrator.
+          Informations de l'école non disponibles. Veuillez contacter votre administrateur.
         </Typography>
       </Box>
     );
@@ -57,14 +57,14 @@ const StudentsPage: React.FC = () => {
       await createStudent(data).unwrap();
       setSnackbar({
         open: true,
-        message: 'Student created successfully!',
+        message: 'Étudiant créé avec succès !',
         severity: 'success',
       });
       setIsCreateDialogOpen(false);
       dispatch(clearFilters());
     } catch (error: any) {
       // Extract the actual error message from the API response
-      let errorMessage = 'Failed to create student. Please try again.';
+      let errorMessage = 'Échec de la création de l\'étudiant. Veuillez réessayer.';
       
       if (error?.data?.detail) {
         // If the API returns a detail message
@@ -118,7 +118,7 @@ const StudentsPage: React.FC = () => {
     // For now, we'll just show a message
           setSnackbar({
         open: true,
-        message: `Delete functionality for ${student.first_name} ${student.last_name} would be implemented here`,
+        message: `Fonctionnalité de suppression pour ${student.first_name} ${student.last_name} serait implémentée ici`,
         severity: 'success',
       });
   };
@@ -131,14 +131,14 @@ const StudentsPage: React.FC = () => {
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" component="h1">
-          Students
+          Étudiants
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setIsCreateDialogOpen(true)}
         >
-          Add Student
+          Ajouter un Étudiant
         </Button>
       </Box>
 
@@ -158,7 +158,7 @@ const StudentsPage: React.FC = () => {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Add New Student</DialogTitle>
+        <DialogTitle>Ajouter un Nouvel Étudiant</DialogTitle>
         <DialogContent>
           <StudentForm
             onSubmit={handleCreateStudent}

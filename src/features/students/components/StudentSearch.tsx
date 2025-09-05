@@ -50,40 +50,50 @@ const StudentSearch: React.FC = () => {
   };
 
   const classLevels = [
-    'Pre-K', 'K', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th',
-    '9th', '10th', '11th', '12th'
+    'CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2', 
+    '6em', '5em', '4em', '3em', 
+    'Seconde', 'Premieree', 'Terminale'
   ];
 
   const sections = ['A', 'B', 'C', 'D', 'E', 'F'];
   const genders = ['male', 'female', 'other'];
+  
+  const getGenderLabel = (gender: string) => {
+    const genderLabels = {
+      male: 'Masculin',
+      female: 'Féminin',
+      other: 'Autre'
+    };
+    return genderLabels[gender as keyof typeof genderLabels] || gender;
+  };
 
   return (
     <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
       <Typography variant="h6" gutterBottom>
-        Search & Filter Students
+        Rechercher et Filtrer les Étudiants
       </Typography>
       
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={6} md={3}>
           <TextField
             fullWidth
-            label="Search by name or ID"
+            label="Rechercher par nom ou ID"
             value={filters.search || ''}
             onChange={handleSearchChange}
-            placeholder="Enter name or student ID..."
+            placeholder="Entrez le nom ou l'ID de l'étudiant..."
             size="small"
           />
         </Grid>
 
         <Grid item xs={12} sm={6} md={2}>
           <FormControl fullWidth size="small">
-            <InputLabel>Class Level</InputLabel>
+            <InputLabel>Niveau de Classe</InputLabel>
             <Select
               value={filters.class_level || ''}
               onChange={handleClassLevelChange}
-              label="Class Level"
+              label="Niveau de Classe"
             >
-              <MenuItem value="">All Levels</MenuItem>
+              <MenuItem value="">Tous les Niveaux</MenuItem>
               {classLevels.map((level) => (
                 <MenuItem key={level} value={level}>
                   {level}
@@ -101,7 +111,7 @@ const StudentSearch: React.FC = () => {
               onChange={handleSectionChange}
               label="Section"
             >
-              <MenuItem value="">All Sections</MenuItem>
+              <MenuItem value="">Toutes les Sections</MenuItem>
               {sections.map((section) => (
                 <MenuItem key={section} value={section}>
                   {section}
@@ -113,16 +123,16 @@ const StudentSearch: React.FC = () => {
 
         <Grid item xs={12} sm={6} md={2}>
           <FormControl fullWidth size="small">
-            <InputLabel>Gender</InputLabel>
+            <InputLabel>Genre</InputLabel>
             <Select
               value={filters.gender || ''}
               onChange={handleGenderChange}
-              label="Gender"
+              label="Genre"
             >
-              <MenuItem value="">All Genders</MenuItem>
+              <MenuItem value="">Tous les Genres</MenuItem>
               {genders.map((gender) => (
                 <MenuItem key={gender} value={gender}>
-                  {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                  {getGenderLabel(gender)}
                 </MenuItem>
               ))}
             </Select>
@@ -131,15 +141,15 @@ const StudentSearch: React.FC = () => {
 
         <Grid item xs={12} sm={6} md={2}>
           <FormControl fullWidth size="small">
-            <InputLabel>Status</InputLabel>
+            <InputLabel>Statut</InputLabel>
             <Select
               value={filters.is_active === undefined ? 'all' : filters.is_active.toString()}
               onChange={handleStatusChange}
-              label="Status"
+              label="Statut"
             >
-              <MenuItem value="all">All Status</MenuItem>
-              <MenuItem value="true">Active</MenuItem>
-              <MenuItem value="false">Inactive</MenuItem>
+              <MenuItem value="all">Tous les Statuts</MenuItem>
+              <MenuItem value="true">Actif</MenuItem>
+              <MenuItem value="false">Inactif</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -151,7 +161,7 @@ const StudentSearch: React.FC = () => {
             size="small"
             fullWidth
           >
-            Clear
+            Effacer
           </Button>
         </Grid>
       </Grid>

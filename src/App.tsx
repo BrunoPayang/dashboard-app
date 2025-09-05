@@ -16,6 +16,7 @@ import StudentsPage from './pages/students/StudentsPage';
 import StudentDetailPage from './pages/students/StudentDetailPage';
 import StudentEditPage from './pages/students/StudentEditPage';
 import StudentCreatePage from './pages/students/StudentCreatePage';
+import ClassesPage from './pages/classes/ClassesPage';
 
 import PaymentsPage from './pages/payments/PaymentsPage';
 import AcademicsPage from './pages/academics/AcademicsPage';
@@ -65,6 +66,7 @@ function App() {
         <Route path="students/create" element={<StudentCreatePage />} />
         <Route path="students/:id" element={<StudentDetailPage />} />
         <Route path="students/:id/edit" element={<StudentEditPage />} />
+        <Route path="classes" element={<ClassesPage />} />
 
         <Route path="payments" element={<PaymentsPage />} />
         <Route path="academics" element={<AcademicsPage />} />

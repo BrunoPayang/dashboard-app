@@ -93,10 +93,11 @@ const StudentEditPage: React.FC = () => {
   const initialFormData: Partial<StudentFormData> = {
     first_name: student.first_name,
     last_name: student.last_name,
+    student_id: student.student_id,
     school: student.school,
-    class_level: student.class_level,
-    section: student.section,
+    class_assigned: student.class_assigned || '',
     gender: student.gender,
+    date_of_birth: student.date_of_birth || '',
     enrollment_date: student.enrollment_date,
   };
 

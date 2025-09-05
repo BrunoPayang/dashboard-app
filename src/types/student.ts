@@ -7,7 +7,9 @@ export interface Student {
   school_name: string;
   class_level: string;
   section: string;
+  class_assigned?: string;
   gender: string;
+  date_of_birth?: string;
   is_active: boolean;
   enrollment_date: string;
   primary_parent: string | null;
@@ -39,8 +41,7 @@ export interface StudentFormData {
   last_name: string;
   student_id: string;
   school: string;
-  class_level: string;
-  section: string;
+  class_assigned: string;
   gender: string;
   date_of_birth: string;
   enrollment_date: string;

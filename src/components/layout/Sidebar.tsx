@@ -18,6 +18,7 @@ import {
   Assessment,
   Settings,
   FamilyRestroom,
+  Class,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -29,6 +30,7 @@ interface SidebarProps {
 const menuItems = [
   { text: 'Tableau de Bord', icon: <Dashboard />, path: '/dashboard' },
   { text: 'Étudiants', icon: <People />, path: '/students' },
+  { text: 'Gestion des Classes', icon: <Class />, path: '/classes' },
   { text: 'Parents', icon: <FamilyRestroom />, path: '/parents' },
   { text: 'Paiements', icon: <Payment />, path: '/payments' },
   { text: 'Académique', icon: <School />, path: '/academics' },

@@ -17,6 +17,8 @@ interface FileState {
     totalCount: number;
     pageSize: number;
   };
+  searchQuery: string;
+  lastSearchTime: number;
 }
 
 const initialState: FileState = {
@@ -34,7 +36,9 @@ const initialState: FileState = {
     totalPages: 1,
     totalCount: 0,
     pageSize: 20
-  }
+  },
+  searchQuery: '',
+  lastSearchTime: 0
 };
 
 const fileSlice = createSlice({
@@ -116,6 +120,12 @@ const fileSlice = createSlice({
     },
     clearUploadProgress: (state) => {
       state.uploadProgress = [];
+    },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
+    setLastSearchTime: (state, action: PayloadAction<number>) => {
+      state.lastSearchTime = action.payload;
     }
   }
 });
@@ -139,7 +149,9 @@ export const {
   addUploadProgress,
   updateUploadProgress,
   removeUploadProgress,
-  clearUploadProgress
+  clearUploadProgress,
+  setSearchQuery,
+  setLastSearchTime
 } = fileSlice.actions;
 
 export default fileSlice.reducer;

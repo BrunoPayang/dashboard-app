@@ -63,7 +63,7 @@ const FilesPage: React.FC = () => {
       setSelectedFiles([]);
       setShowUploadList(false);
     } catch (error) {
-      console.error('Upload failed:', error);
+      console.error('Échec du téléchargement:', error);
     }
   };
 
@@ -81,7 +81,7 @@ const FilesPage: React.FC = () => {
 
   const handleEditFile = (file: FileItem) => {
     // TODO: Implement file editing modal
-    console.log('Edit file:', file);
+    console.log('Modifier le fichier:', file);
   };
 
   const handleDownloadFile = (file: FileItem) => {
@@ -97,20 +97,20 @@ const FilesPage: React.FC = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h2" gutterBottom>
-          File Management
+          Gestion des Fichiers
         </Typography>
         <Button
           variant="contained"
           startIcon={<CloudUploadIcon />}
           onClick={() => setActiveTab(0)}
         >
-          Upload Files
+          Télécharger des Fichiers
         </Button>
       </Box>
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        <strong>File Management System:</strong> Upload, organize, and manage school files including 
-        academic transcripts, behavior reports, payment receipts, and student documents.
+        <strong>Système de Gestion des Fichiers :</strong> Téléchargez, organisez et gérez les fichiers scolaires incluant 
+        les relevés de notes, rapports de comportement, reçus de paiement et documents étudiants.
       </Alert>
 
       {/* Upload Progress */}
@@ -126,9 +126,9 @@ const FilesPage: React.FC = () => {
 
       {/* Main Content */}
       <Paper sx={{ width: '100%' }}>
-        <Tabs value={activeTab} onChange={handleTabChange} aria-label="File management tabs">
-          <Tab label="Upload Files" />
-          <Tab label="File Browser" />
+        <Tabs value={activeTab} onChange={handleTabChange} aria-label="Onglets de gestion des fichiers">
+          <Tab label="Télécharger des Fichiers" />
+          <Tab label="Navigateur de Fichiers" />
         </Tabs>
 
         {/* Upload Tab */}

@@ -80,7 +80,7 @@ const PaymentSummaryCards: React.FC = () => {
   if (error) {
     return (
       <Alert severity="error">
-        Failed to load payment summary. Please try again.
+        Échec du chargement du résumé des paiements. Veuillez réessayer.
       </Alert>
     );
   }
@@ -91,41 +91,41 @@ const PaymentSummaryCards: React.FC = () => {
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6} md={3}>
         <SummaryCard
-          title="Total Revenue"
+          title="Revenus Totaux"
           value={formatCurrency(summary.paid_amount)}
           icon={<TrendingUp />}
           color="success"
-          subtitle={`${summary.total_payments} total payments`}
+          subtitle={`${summary.total_payments} paiements totaux`}
         />
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
         <SummaryCard
-          title="Pending Payments"
+          title="Paiements en Attente"
           value={formatCurrency(summary.pending_amount)}
           icon={<Schedule />}
           color="warning"
-          subtitle="Awaiting payment"
+          subtitle="En attente de paiement"
         />
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
         <SummaryCard
-          title="Overdue Payments"
+          title="Paiements en Retard"
           value={formatCurrency(summary.overdue_amount)}
           icon={<TrendingDown />}
           color="error"
-          subtitle="Requires attention"
+          subtitle="Nécessite une attention"
         />
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
         <SummaryCard
-          title="Total Amount"
+          title="Montant Total"
           value={formatCurrency(summary.total_amount)}
           icon={<AttachMoney />}
           color="primary"
-          subtitle="All payment records"
+          subtitle="Tous les enregistrements de paiement"
         />
       </Grid>
     </Grid>

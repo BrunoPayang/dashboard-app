@@ -49,16 +49,16 @@ const OverduePaymentAlert: React.FC<OverduePaymentAlertProps> = ({
             onClick={() => setDialogOpen(true)}
             startIcon={<Visibility />}
           >
-            View Details
+            Voir les Détails
           </Button>
         }
         sx={{ mb: 3 }}
       >
         <Typography variant="body2" fontWeight="medium">
-          {overduePayments.length} payment{overduePayments.length > 1 ? 's' : ''} overdue
+          {overduePayments.length} paiement{overduePayments.length > 1 ? 's' : ''} en retard
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Total overdue amount: {formatCurrency(totalOverdueAmount)}
+          Montant total en retard: {formatCurrency(totalOverdueAmount)}
         </Typography>
       </Alert>
 
@@ -72,13 +72,13 @@ const OverduePaymentAlert: React.FC<OverduePaymentAlertProps> = ({
         <DialogTitle>
           <Box display="flex" alignItems="center" gap={1}>
             <Warning color="warning" />
-            Overdue Payments ({overduePayments.length})
+            Paiements en Retard ({overduePayments.length})
           </Box>
         </DialogTitle>
         
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            These payment records are past their due dates and require immediate attention.
+            Ces enregistrements de paiement ont dépassé leurs dates d'échéance et nécessitent une attention immédiate.
           </Typography>
 
           <List>
@@ -115,17 +115,17 @@ const OverduePaymentAlert: React.FC<OverduePaymentAlertProps> = ({
                     <Box>
                       <Typography variant="body2" color="text.secondary">
                         {payment.payment_type.replace('_', ' ').toUpperCase()} • 
-                        Due: {formatDate(payment.due_date)}
+                        Échéance: {formatDate(payment.due_date)}
                       </Typography>
                       <Box mt={1} display="flex" gap={1}>
                         <Chip
-                          label={`${payment.days_overdue} days overdue`}
+                          label={`${payment.days_overdue} jours de retard`}
                           color="error"
                           size="small"
                         />
                         {payment.reference_number && (
                           <Chip
-                            label={`Ref: ${payment.reference_number}`}
+                            label={`Réf: ${payment.reference_number}`}
                             variant="outlined"
                             size="small"
                           />
@@ -143,7 +143,7 @@ const OverduePaymentAlert: React.FC<OverduePaymentAlertProps> = ({
                       setDialogOpen(false);
                     }}
                   >
-                    View
+                    Voir
                   </Button>
                 )}
               </ListItem>
@@ -160,14 +160,14 @@ const OverduePaymentAlert: React.FC<OverduePaymentAlertProps> = ({
             }}
           >
             <Typography variant="body1" fontWeight="medium" color="error.dark">
-              Total Overdue Amount: {formatCurrency(totalOverdueAmount)}
+              Montant Total en Retard: {formatCurrency(totalOverdueAmount)}
             </Typography>
           </Box>
         </DialogContent>
         
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>
-            Close
+            Fermer
           </Button>
         </DialogActions>
       </Dialog>
