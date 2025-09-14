@@ -20,7 +20,7 @@ The School Configuration API provides comprehensive management of school informa
 
 ### Base URL
 ```
-http://localhost:8000/api/schools/
+https://schoolconnect-qeaf.onrender.com/api/schools/
 ```
 
 ## Authentication
@@ -67,7 +67,7 @@ Retrieve a paginated list of schools with filtering options.
 ```json
 {
   "count": 25,
-  "next": "http://localhost:8000/api/schools/?page=2",
+  "next": "https://schoolconnect-qeaf.onrender.com/api/schools/?page=2",
   "previous": null,
   "results": [
     {
@@ -575,7 +575,7 @@ Deactivate a school to make it unavailable.
 
 **Create a school:**
 ```bash
-curl -X POST http://localhost:8000/api/schools/ \
+curl -X POST https://schoolconnect-qeaf.onrender.com/api/schools/ \
   -H "Authorization: Token your-token-here" \
   -H "Content-Type: application/json" \
   -d '{
@@ -587,7 +587,7 @@ curl -X POST http://localhost:8000/api/schools/ \
 
 **Update school configuration:**
 ```bash
-curl -X PATCH http://localhost:8000/api/schools/{school-id}/configuration/ \
+curl -X PATCH https://schoolconnect-qeaf.onrender.com/api/schools/{school-id}/configuration/ \
   -H "Authorization: Token your-token-here" \
   -H "Content-Type: application/json" \
   -d '{
@@ -599,7 +599,7 @@ curl -X PATCH http://localhost:8000/api/schools/{school-id}/configuration/ \
 
 **Get school configuration:**
 ```bash
-curl -X GET http://localhost:8000/api/schools/{school-id}/configuration/ \
+curl -X GET https://schoolconnect-qeaf.onrender.com/api/schools/{school-id}/configuration/ \
   -H "Authorization: Token your-token-here"
 ```
 

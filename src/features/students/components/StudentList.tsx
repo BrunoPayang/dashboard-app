@@ -71,7 +71,7 @@ const StudentList: React.FC<StudentListProps> = ({
   console.log('StudentList - query result:', { data, isLoading, error });
   
   // Log the actual API URL being called
-  const apiUrl = `${process.env.REACT_APP_API_BASE_URL || 'http://172.16.20.34:8000/api'}/students/`;
+  const apiUrl = `${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/`;
   console.log('StudentList - API URL being called:', apiUrl);
   console.log('StudentList - Query params:', { ...filters, schoolId: school?.id || '' });
   console.log('StudentList - Access token:', localStorage.getItem('access_token'));
@@ -82,7 +82,7 @@ const StudentList: React.FC<StudentListProps> = ({
     const testDirectAPI = async () => {
       try {
         // Test with the exact same parameters that worked in browser
-        const response = await fetch('http://172.16.20.34:8000/api/students/', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
             'Content-Type': 'application/json'
@@ -113,7 +113,7 @@ const StudentList: React.FC<StudentListProps> = ({
       
       // Test 1: Without Content-Type header
       try {
-        const response1 = await fetch('http://172.16.20.34:8000/api/students/', {
+        const response1 = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
@@ -126,7 +126,7 @@ const StudentList: React.FC<StudentListProps> = ({
       
       // Test 2: With different User-Agent
       try {
-        const response2 = await fetch('http://172.16.20.34:8000/api/students/', {
+        const response2 = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -140,7 +140,7 @@ const StudentList: React.FC<StudentListProps> = ({
       
       // Test 3: Check if it's a CORS issue
       try {
-        const response3 = await fetch('http://172.16.20.34:8000/api/students/', {
+        const response3 = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/`, {
           method: 'GET',
           mode: 'cors',
           headers: {

@@ -63,7 +63,7 @@ The Student Management System provides a comprehensive REST API for managing sch
 
 ## Base URL
 ```
-http://localhost:8000/api/
+https://schoolconnect-qeaf.onrender.com/api/
 ```
 
 **Note**: Most endpoints are prefixed with `/api/` except authentication which uses `/api/auth/`
@@ -144,7 +144,7 @@ GET /api/schools/
 ```json
 {
     "count": 25,
-    "next": "http://localhost:8000/api/schools/?page=2",
+    "next": "https://schoolconnect-qeaf.onrender.com/api/schools/?page=2",
     "previous": null,
     "results": [
         {
@@ -594,7 +594,7 @@ Example paginated response:
 ```json
 {
     "count": 1000,
-    "next": "http://localhost:8000/api/students/?page=2",
+    "next": "https://schoolconnect-qeaf.onrender.com/api/students/?page=2",
     "previous": null,
     "results": [...]
 }

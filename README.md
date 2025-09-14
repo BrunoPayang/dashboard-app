@@ -65,7 +65,7 @@ src/
 2. Set environment variables:
    Create a `.env` file in the root directory:
    ```env
-   REACT_APP_API_BASE_URL=http://localhost:8000
+   REACT_APP_API_BASE_URL=https://schoolconnect-qeaf.onrender.com/api
    ```
 
 3. Start the development server:
@@ -74,6 +74,27 @@ src/
    ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Deployment
+
+This application is configured for deployment on Render. See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
+### Quick Deploy to Render
+
+1. **Connect Repository**: Go to [Render Dashboard](https://dashboard.render.com) and connect your Git repository
+2. **Configure Build**: Use the provided `render.yaml` configuration
+3. **Set Environment Variables**: Configure the required environment variables
+4. **Deploy**: Click deploy and your app will be live!
+
+### Production Build
+
+```bash
+# Build for production
+npm run build
+
+# Build with production optimizations
+npm run build:production
+```
 
 ### Available Scripts
 
@@ -139,7 +160,7 @@ The app uses JWT authentication:
 
 Set production environment variables:
 ```env
-REACT_APP_API_BASE_URL=https://your-api-domain.com
+REACT_APP_API_BASE_URL=https://schoolconnect-qeaf.onrender.com/api
 ```
 
 ## Contributing

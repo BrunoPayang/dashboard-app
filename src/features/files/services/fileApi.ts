@@ -4,7 +4,7 @@ import { FileItem, FileUpdateData, FilesResponse } from '../types/file';
 export const fileApi = createApi({
   reducerPath: 'fileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token');
       if (token) {

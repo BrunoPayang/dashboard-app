@@ -88,7 +88,7 @@ const FileBrowser: React.FC<FileBrowserProps> = ({
       filesData,
       pagination,
       filters,
-      apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'
+      apiBaseUrl: process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'
     });
   }, [isLoading, error, filesData, pagination, filters]);
 

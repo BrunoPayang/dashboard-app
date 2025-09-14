@@ -28,7 +28,7 @@ export interface NotificationsResponse {
 export const notificationsApi = createApi({
   reducerPath: 'notificationsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token');
       if (token) {

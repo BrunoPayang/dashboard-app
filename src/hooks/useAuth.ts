@@ -34,7 +34,7 @@ export const useAuth = () => {
             
             if (schoolId) {
               try {
-                const schoolResponse = await fetch(`http://localhost:8000/api/schools/${schoolId}/`, {
+                const schoolResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/schools/${schoolId}/`, {
                   headers: { 
                     Authorization: `Bearer ${result.access}`,
                     'Content-Type': 'application/json'

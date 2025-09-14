@@ -10,7 +10,7 @@ import {
 export const studentApi = createApi({
   reducerPath: 'studentApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -42,7 +42,7 @@ export const studentApi = createApi({
         };
         
         console.log('RTK Query - Making request to students/ with params:', queryParams);
-        console.log('RTK Query - Full URL will be:', `${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/students/?${new URLSearchParams(queryParams as any).toString()}`);
+        console.log('RTK Query - Full URL will be:', `${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/students/?${new URLSearchParams(queryParams as any).toString()}`);
         
         return {
           url: 'students/',

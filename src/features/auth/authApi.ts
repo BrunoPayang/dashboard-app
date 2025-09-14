@@ -5,7 +5,7 @@ export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: (() => {
-      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api';
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api';
       console.log('Auth API Base URL:', baseUrl);
       return baseUrl;
     })(),

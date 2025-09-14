@@ -82,7 +82,7 @@ npm install
 ### 2. Environment Configuration
 Create a `.env` file in the root directory:
 ```env
-REACT_APP_API_BASE_URL=http://localhost:8000
+REACT_APP_API_BASE_URL=https://schoolconnect-qeaf.onrender.com/api
 ```
 
 ### 3. Start Development Server
