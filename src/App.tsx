@@ -25,6 +25,7 @@ import NotificationsPage from './pages/notifications/NotificationsPage';
 import FilesPage from './pages/files/FilesPage';
 import ReportsPage from './pages/reports/ReportsPage';
 import SettingsPage from './pages/settings/SettingsPage';
+import GlobalLoadingOverlay from './components/common/GlobalLoadingOverlay';
 
 function App() {
   const dispatch = useDispatch();
@@ -49,6 +50,8 @@ function App() {
   }
 
   return (
+    <>
+    <GlobalLoadingOverlay />
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       
@@ -79,6 +82,7 @@ function App() {
       
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
+    </>
   );
 }
 
