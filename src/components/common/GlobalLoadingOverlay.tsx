@@ -1,11 +1,46 @@
 import React from 'react';
 import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
-import { useIsFetching, useIsMutating } from '@reduxjs/toolkit/query/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../features/store';
+import { authApi } from '../../features/auth/authApi';
+import { studentApi } from '../../features/students/studentApi';
+import { notificationsApi } from '../../features/notifications/notificationsApi';
+import { fileApi } from '../../features/files/services/fileApi';
+import { schoolApi } from '../../features/school/schoolApi';
+import { classApi } from '../../features/classes/classApi';
+import { paymentApi } from '../../services/api/paymentApi';
+import { academicApi } from '../../services/api/academicApi';
+import { parentManagementApi } from '../../services/api/parentManagementApi';
+
+function isApiBusy(state: RootState, reducerPath: string): boolean {
+  const apiState: any = (state as any)[reducerPath];
+  if (!apiState) return false;
+
+  const hasPendingQueries = Object.values(apiState.queries || {}).some(
+    (q: any) => q && (q.status === 'pending' || q.status === 'loading')
+  );
+
+  const hasPendingMutations = Object.values(apiState.mutations || {}).some(
+    (m: any) => m && (m.status === 'pending' || m.status === 'loading')
+  );
+
+  return hasPendingQueries || hasPendingMutations;
+}
 
 const GlobalLoadingOverlay: React.FC = () => {
-  const numFetching = useIsFetching();
-  const numMutating = useIsMutating();
-  const isOpen = (numFetching as number) + (numMutating as number) > 0;
+  const isOpen = useSelector((state: RootState) => {
+    return (
+      isApiBusy(state, authApi.reducerPath) ||
+      isApiBusy(state, studentApi.reducerPath) ||
+      isApiBusy(state, notificationsApi.reducerPath) ||
+      isApiBusy(state, fileApi.reducerPath) ||
+      isApiBusy(state, schoolApi.reducerPath) ||
+      isApiBusy(state, classApi.reducerPath) ||
+      isApiBusy(state, paymentApi.reducerPath) ||
+      isApiBusy(state, academicApi.reducerPath) ||
+      isApiBusy(state, parentManagementApi.reducerPath)
+    );
+  });
 
   return (
     <Backdrop
