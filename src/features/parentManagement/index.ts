@@ -6,6 +6,7 @@ export { default as ParentFilters } from './components/ParentDirectory/ParentFil
 
 export { default as CreateParentForm } from './components/ParentAccountManagement/CreateParentForm';
 export { default as EditParentForm } from './components/ParentAccountManagement/EditParentForm';
+export { default as ParentCreationSuccess } from './components/ParentAccountManagement/ParentCreationSuccess';
 
 export { default as ParentStudentRelationships } from './components/ParentStudentRelationships/ParentStudentRelationships';
 export { default as ParentCommunication } from './components/ParentCommunication/ParentCommunication';
