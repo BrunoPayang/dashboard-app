@@ -1,2 +1,2 @@
-# Netlify-style redirects for React Router
+# SPA redirects - all routes should serve index.html
 /*    /index.html   200
