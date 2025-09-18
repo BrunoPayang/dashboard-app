@@ -24,8 +24,10 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
-    # Ensure SPA routing works
+    # SPA configuration
     spa: true
+    # Fallback for all routes
+    fallback: /index.html
     envVars:
       - key: NODE_ENV
         value: production

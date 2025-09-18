@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: school-dashboard-frontend-node
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run serve
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_API_BASE_URL
+        value: https://schoolconnect-qeaf.onrender.com/api
+      - key: REACT_APP_APP_NAME
+        value: School Dashboard
+      - key: REACT_APP_APP_VERSION
+        value: 1.0.0
+      - key: REACT_APP_ENABLE_ANALYTICS
+        value: true
+      - key: REACT_APP_ENABLE_DEBUG_MODE
+        value: false
