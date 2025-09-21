@@ -14,7 +14,7 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon
 } from '@mui/icons-material';
-import { useGetParentsFromRelationshipsQuery } from '../../../../services/api/parentManagementApi';
+import { useGetParentsQuery } from '../../../../services/api/parentManagementApi';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/redux';
 import {
   setSelectedParents,
@@ -40,12 +40,13 @@ const ParentDirectory: React.FC = () => {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [pageSize] = useState(20);
 
-  // Fetch parents data from relationships (more accurate for school filtering)
-  const { data: parentsData, isLoading, error, refetch } = useGetParentsFromRelationshipsQuery({
+  // Fetch parents data
+  const { data: parentsData, isLoading, error, refetch } = useGetParentsQuery({
     page: currentPage,
     page_size: pageSize,
-    search: parentFilters.search,
-    status: parentFilters.is_active ? 'active' : undefined
+    search: parentFilters.search || '',
+    is_active: parentFilters.is_active,
+    ordering: parentFilters.ordering || 'first_name'
   });
 
   const totalPages = parentsData ? Math.ceil(parentsData.count / pageSize) : 0;
@@ -82,9 +83,12 @@ const ParentDirectory: React.FC = () => {
   }, [parentFilters]);
 
   if (error) {
+    console.error('Parent list error:', error);
     return (
       <Alert severity="error" sx={{ mb: 2 }}>
         Erreur lors du chargement des parents: {error.toString()}
+        <br />
+        <small>Check console for more details</small>
       </Alert>
     );
   }

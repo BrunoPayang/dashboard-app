@@ -23,15 +23,19 @@ export const parentManagementApi = createApi({
   endpoints: (builder) => ({
     // Parent Directory Management
     getParents: builder.query<{ results: Parent[]; count: number }, ParentFilters & { page?: number; page_size?: number }>({
-      query: (params) => ({
-        url: 'auth/users/',
-        params: {
+      query: (params) => {
+        const queryParams = {
           ...params,
-          user_type: 'parent',
           page: params.page || 1,
           page_size: params.page_size || 20
-        }
-      }),
+        };
+        console.log('RTK Query - Fetching parents with params:', queryParams);
+        console.log('RTK Query - Full URL will be:', `${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/parents/?${new URLSearchParams(queryParams as any).toString()}`);
+        return {
+          url: 'parents/',
+          params: queryParams
+        };
+      },
       providesTags: (result) =>
         result
           ? [
@@ -105,7 +109,7 @@ export const parentManagementApi = createApi({
     }),
 
     getParent: builder.query<Parent, number>({
-      query: (id) => `auth/users/${id}/`,
+      query: (id) => `parents/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Parent', id }]
     }),
 
@@ -120,7 +124,7 @@ export const parentManagementApi = createApi({
 
     updateParent: builder.mutation<Parent, { id: number; data: UpdateParentRequest }>({
       query: ({ id, data }) => ({
-        url: `auth/users/${id}/`,
+        url: `parents/${id}/`,
         method: 'PATCH',
         body: data
       }),
@@ -132,7 +136,7 @@ export const parentManagementApi = createApi({
 
     deleteParent: builder.mutation<void, number>({
       query: (id) => ({
-        url: `auth/users/${id}/`,
+        url: `parents/${id}/`,
         method: 'DELETE'
       }),
       invalidatesTags: [{ type: 'Parent', id: 'LIST' }]
