@@ -51,8 +51,14 @@ const schema = yup.object({
   semester: yup.string().required('Semestre requis'),
   gpa: yup.number()
     .nullable()
-    .min(0, 'La moyenne doit être d\'au moins 0')
-    .max(20, 'La moyenne ne peut pas dépasser 20'),
+    .min(0, 'La moyenne doit être d\'au moins 0.00')
+    .max(20, 'La moyenne ne peut pas dépasser 20.00')
+    .test('decimal-format', 'Format invalide - utilisez le format 0.00', (value) => {
+      if (value === null || value === undefined) return true;
+      // Ensure the number can be properly formatted to 2 decimal places
+      const formatted = parseFloat(value.toFixed(2));
+      return formatted === value || Math.abs(formatted - value) < 0.001;
+    }),
   file_name: yup.string().required('Nom du fichier requis'),
   file_url: yup.string()
     .required('Fichier requis')
@@ -232,10 +238,13 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         // Build complete URL for update as well
         const completeFileUrl = data.file_url ? buildCompleteUrl(data.file_url) : undefined;
         
+        // Format GPA to 2 decimal places if provided
+        const formattedGPA = data.gpa !== null ? parseFloat(data.gpa.toFixed(2)) : null;
+        
         const updateData = {
           academic_year: data.academic_year,
           semester: data.semester,
-          gpa: data.gpa ?? null,
+          gpa: formattedGPA,
           file_url: completeFileUrl,
           notes: data.notes,
         };
@@ -243,6 +252,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         console.log('Updating transcript with data:', updateData);
         console.log('Original file URL:', data.file_url);
         console.log('Complete file URL:', completeFileUrl);
+        console.log('Formatted GPA:', formattedGPA);
         await updateTranscript({ id: transcript.id, data: updateData }).unwrap();
       } else {
         // Ensure file_url is valid and complete
@@ -254,11 +264,14 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         // Build complete URL if it's just a path
         const completeFileUrl = buildCompleteUrl(data.file_url);
         
+        // Format GPA to 2 decimal places if provided
+        const formattedGPA = data.gpa !== null ? parseFloat(data.gpa.toFixed(2)) : null;
+        
         const createData: CreateTranscriptRequest = {
           student: data.student,
           academic_year: data.academic_year,
           semester: data.semester,
-          gpa: data.gpa ?? null,
+          gpa: formattedGPA,
           file_name: data.file_name,
           file_url: completeFileUrl,
           uploaded_by: data.uploaded_by,
@@ -268,7 +281,8 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         console.log('Creating transcript with data:', createData);
         console.log('Original file URL:', data.file_url);
         console.log('Complete file URL:', completeFileUrl);
-        console.log('File URL is valid URL:', completeFileUrl.startsWith('http'));
+        console.log('Original GPA:', data.gpa);
+        console.log('Formatted GPA:', formattedGPA);
         
         await createTranscript(createData).unwrap();
       }
@@ -383,11 +397,11 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
                     inputProps={{
                       min: 0,
                       max: 20,
-                      step: 0.1,
+                      step: 0.01,
                     }}
-                    placeholder="Saisir la moyenne (0 - 20)"
+                    placeholder="Saisir la moyenne (0.00 - 20.00)"
                     error={!!errors.gpa}
-                    helperText={errors.gpa?.message || 'Échelle: 0 - 20 (Laisser vide si non disponible)'}
+                    helperText={errors.gpa?.message || 'Échelle: 0.00 - 20.00 (Format avec 2 décimales)'}
                   />
                 )}
               />
