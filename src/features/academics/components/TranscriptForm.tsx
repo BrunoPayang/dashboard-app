@@ -40,10 +40,15 @@ const schema = yup.object({
   semester: yup.string().required('Semestre requis'),
   gpa: yup.number()
     .nullable()
-    .min(0, 'La moyenne doit être d\'au moins 0.0')
-    .max(4, 'La moyenne ne peut pas dépasser 4.0'),
+    .min(0, 'La moyenne doit être d\'au moins 0')
+    .max(20, 'La moyenne ne peut pas dépasser 20'),
   file_name: yup.string().required('Nom du fichier requis'),
-  file_url: yup.string().required('URL du fichier requise'),
+  file_url: yup.string()
+    .required('Fichier requis')
+    .test('not-empty', 'Veuillez sélectionner un fichier', (value) => {
+      return value !== '' && value !== null && value !== undefined;
+    })
+    .url('URL du fichier invalide'),
   uploaded_by: yup.number().required('Utilisateur requis'),
   notes: yup.string(),
 });
@@ -80,6 +85,22 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
   
   const { data: filesData } = useGetFilesQuery({ page: 1, page_size: 1000 });
   const { user } = useAuth();
+
+  // Debug: Log files data to see what URLs are available
+  useEffect(() => {
+    if (filesData?.results) {
+      console.log('Available files for transcript:', filesData.results.length);
+      filesData.results.forEach((file: FileItem, index: number) => {
+        console.log(`File ${index + 1}:`, {
+          id: file.id,
+          name: file.original_name,
+          firebase_url: file.firebase_url,
+          url_type: typeof file.firebase_url,
+          is_valid_url: file.firebase_url.startsWith('http')
+        });
+      });
+    }
+  }, [filesData]);
 
   const currentYear = new Date().getFullYear();
   const academicYears = Array.from({ length: 10 }, (_, i) => {
@@ -151,6 +172,12 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
 
   const onSubmit = async (data: FormData) => {
     try {
+      // Validate file_url format before submission
+      if (data.file_url && !data.file_url.startsWith('http')) {
+        console.error('Invalid file URL format:', data.file_url);
+        return;
+      }
+
       if (isEditing && transcript) {
         const updateData = {
           academic_year: data.academic_year,
@@ -160,11 +187,18 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
           notes: data.notes,
         };
         
+        console.log('Updating transcript with data:', updateData);
         await updateTranscript({ id: transcript.id, data: updateData }).unwrap();
       } else {
         // Ensure student is not empty
         if (!data.student) {
           console.error('Student field is required');
+          return;
+        }
+
+        // Ensure file_url is valid
+        if (!data.file_url) {
+          console.error('File URL is required');
           return;
         }
         
@@ -183,6 +217,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         console.log('File URL being submitted:', data.file_url);
         console.log('File URL type:', typeof data.file_url);
         console.log('File URL length:', data.file_url?.length);
+        console.log('Is valid URL:', data.file_url.startsWith('http'));
         
         await createTranscript(createData).unwrap();
       }
@@ -286,7 +321,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="GPA (Optional)"
+                    label="Moyenne (Optionnel)"
                     type="number"
                     fullWidth
                     value={field.value || ''}
@@ -296,12 +331,12 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
                     }}
                     inputProps={{
                       min: 0,
-                      max: 4,
+                      max: 20,
                       step: 0.1,
                     }}
-                    placeholder="Enter GPA (0.0 - 4.0)"
+                    placeholder="Saisir la moyenne (0 - 20)"
                     error={!!errors.gpa}
-                    helperText={errors.gpa?.message || 'Scale: 0.0 - 4.0 (Leave empty if not available)'}
+                    helperText={errors.gpa?.message || 'Échelle: 0 - 20 (Laisser vide si non disponible)'}
                   />
                 )}
               />
@@ -336,7 +371,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
                     select
                     fullWidth
                     error={!!errors.file_url}
-                    helperText={errors.file_url?.message || 'Select a file from the uploaded files'}
+                    helperText={errors.file_url?.message || 'Sélectionnez un fichier parmi les fichiers téléchargés. Le fichier doit avoir une URL valide.'}
                   >
                     <MenuItem value="">Select a file</MenuItem>
                     {filesData?.results.map((file: FileItem) => (
