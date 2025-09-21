@@ -239,7 +239,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         const completeFileUrl = data.file_url ? buildCompleteUrl(data.file_url) : undefined;
         
         // Format GPA to 2 decimal places if provided
-        const formattedGPA = data.gpa !== null ? parseFloat(data.gpa.toFixed(2)) : null;
+        const formattedGPA = data.gpa !== null && data.gpa !== undefined ? parseFloat(data.gpa.toFixed(2)) : null;
         
         const updateData = {
           academic_year: data.academic_year,
@@ -265,7 +265,7 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
         const completeFileUrl = buildCompleteUrl(data.file_url);
         
         // Format GPA to 2 decimal places if provided
-        const formattedGPA = data.gpa !== null ? parseFloat(data.gpa.toFixed(2)) : null;
+        const formattedGPA = data.gpa !== null && data.gpa !== undefined ? parseFloat(data.gpa.toFixed(2)) : null;
         
         const createData: CreateTranscriptRequest = {
           student: data.student,
