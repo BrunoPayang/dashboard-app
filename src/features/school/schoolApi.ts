@@ -35,20 +35,20 @@ export const schoolApi = createApi({
       page_size?: number;
     }>({
       query: (params) => ({
-        url: '/api/schools/',
+        url: 'schools/',
         params,
       }),
       providesTags: ['School'],
     }),
     
     getSchool: builder.query<School, string>({
-      query: (id) => `/api/schools/${id}/`,
+      query: (id) => `schools/${id}/`,
       providesTags: (result, error, id) => [{ type: 'School', id }],
     }),
     
     createSchool: builder.mutation<School, Partial<School>>({
       query: (school) => ({
-        url: '/api/schools/',
+        url: 'schools/',
         method: 'POST',
         body: school,
       }),
@@ -57,7 +57,7 @@ export const schoolApi = createApi({
     
     updateSchool: builder.mutation<School, { id: string; data: SchoolUpdateRequest }>({
       query: ({ id, data }) => ({
-        url: `/api/schools/${id}/`,
+        url: `schools/${id}/`,
         method: 'PUT',
         body: data,
       }),
@@ -69,7 +69,7 @@ export const schoolApi = createApi({
     
     patchSchool: builder.mutation<School, { id: string; data: Partial<SchoolUpdateRequest> }>({
       query: ({ id, data }) => ({
-        url: `/api/schools/${id}/`,
+        url: `schools/${id}/`,
         method: 'PATCH',
         body: data,
       }),
@@ -81,7 +81,7 @@ export const schoolApi = createApi({
     
     deleteSchool: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/api/schools/${id}/`,
+        url: `schools/${id}/`,
         method: 'DELETE',
       }),
       invalidatesTags: ['School'],
@@ -89,7 +89,7 @@ export const schoolApi = createApi({
     
     // School Configuration Endpoints
     getSchoolConfiguration: builder.query<SchoolConfigurationResponse, string>({
-      query: (id) => `/api/schools/${id}/configuration/`,
+      query: (id) => `schools/${id}/configuration/`,
       providesTags: (result, error, id) => [{ type: 'SchoolConfiguration', id }],
     }),
     
@@ -98,7 +98,7 @@ export const schoolApi = createApi({
       data: SchoolConfigurationUpdateRequest 
     }>({
       query: ({ id, data }) => ({
-        url: `/api/schools/${id}/configuration/`,
+        url: `schools/${id}/configuration/`,
         method: 'PUT',
         body: data,
       }),
@@ -113,7 +113,7 @@ export const schoolApi = createApi({
       data: Partial<SchoolConfigurationUpdateRequest> 
     }>({
       query: ({ id, data }) => ({
-        url: `/api/schools/${id}/configuration/`,
+        url: `schools/${id}/configuration/`,
         method: 'PATCH',
         body: data,
       }),
@@ -125,14 +125,14 @@ export const schoolApi = createApi({
     
     // School Statistics
     getSchoolStatistics: builder.query<SchoolStatistics, string>({
-      query: (id) => `/api/schools/${id}/statistics/`,
+      query: (id) => `schools/${id}/statistics/`,
       providesTags: (result, error, id) => [{ type: 'SchoolStatistics', id }],
     }),
     
     // School Status Management
     activateSchool: builder.mutation<{ message: string; is_active: boolean }, string>({
       query: (id) => ({
-        url: `/api/schools/${id}/activate/`,
+        url: `schools/${id}/activate/`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [
@@ -143,7 +143,7 @@ export const schoolApi = createApi({
     
     deactivateSchool: builder.mutation<{ message: string; is_active: boolean }, string>({
       query: (id) => ({
-        url: `/api/schools/${id}/deactivate/`,
+        url: `schools/${id}/deactivate/`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [
