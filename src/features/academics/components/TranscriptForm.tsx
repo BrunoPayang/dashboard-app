@@ -59,7 +59,23 @@ const schema = yup.object({
     .test('not-empty', 'Veuillez sélectionner un fichier', (value) => {
       return value !== '' && value !== null && value !== undefined;
     })
-    .url('URL du fichier invalide'),
+    .test('valid-file-url', 'URL du fichier invalide', (value) => {
+      if (!value) return false;
+      console.log('Validating file URL:', value);
+      
+      // Accept complete URLs or paths that can be converted to URLs
+      const completeUrl = buildCompleteUrl(value);
+      console.log('Complete URL:', completeUrl);
+      
+      try {
+        new URL(completeUrl);
+        console.log('URL validation: PASSED');
+        return true;
+      } catch (error) {
+        console.log('URL validation: FAILED', error);
+        return false;
+      }
+    }),
   uploaded_by: yup.number().required('Utilisateur requis'),
   notes: yup.string(),
 });
