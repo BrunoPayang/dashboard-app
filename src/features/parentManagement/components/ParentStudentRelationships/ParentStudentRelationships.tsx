@@ -39,7 +39,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useGetParentStudentRelationshipsQuery, useCreateParentStudentRelationshipMutation, useUpdateParentStudentRelationshipMutation, useDeleteParentStudentRelationshipMutation } from '../../../../services/api/parentManagementApi';
+import { useGetParentStudentRelationshipsQuery, useCreateParentStudentRelationshipMutation, useUpdateParentStudentRelationshipMutation, useDeleteParentStudentRelationshipMutation, useGetParentsQuery } from '../../../../services/api/parentManagementApi';
 import { useGetStudentsQuery } from '../../../../features/students/studentApi';
 import { RELATIONSHIP_TYPES } from '../../../../types/parentManagement';
 import { useAppSelector } from '../../../../hooks/redux';
@@ -81,11 +81,12 @@ const ParentStudentRelationships: React.FC = () => {
     ordering: 'created_at'
   });
 
-  // Fetch parents data for dropdown (using the same endpoint as parent directory)
-  const { data: parentsData } = useGetParentStudentRelationshipsQuery({
+  // Fetch parents data for dropdown (using the proper parents endpoint)
+  const { data: parentsData } = useGetParentsQuery({
     page: 1,
     page_size: 1000, // Get all parents
-    ordering: 'created_at'
+    search: '',
+    ordering: 'first_name'
   });
 
   // Fetch students data for dropdown
@@ -198,22 +199,14 @@ const ParentStudentRelationships: React.FC = () => {
     return RELATIONSHIP_TYPES[type as keyof typeof RELATIONSHIP_TYPES] || type;
   };
 
-  // Transform parents data for dropdown (unique parents with names)
+  // Transform parents data for dropdown (direct parent data)
   const getUniqueParents = () => {
     if (!parentsData?.results) return [];
     
-    const uniqueParents = new Map<number, { id: number; name: string }>();
-    
-    parentsData.results.forEach(relationship => {
-      if (relationship.parent && !uniqueParents.has(relationship.parent)) {
-        uniqueParents.set(relationship.parent, {
-          id: relationship.parent,
-          name: relationship.parent_name || `Parent ${relationship.parent}`
-        });
-      }
-    });
-    
-    return Array.from(uniqueParents.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return parentsData.results.map(parent => ({
+      id: parent.id,
+      name: `${parent.first_name} ${parent.last_name}`.trim() || parent.username
+    })).sort((a, b) => a.name.localeCompare(b.name));
   };
 
   if (error) {
