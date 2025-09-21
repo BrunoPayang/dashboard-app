@@ -30,6 +30,17 @@ import type {
   CreateTranscriptRequest
 } from '../../../types/academic';
 
+// Utility function to build complete URL from path
+const buildCompleteUrl = (path: string): string => {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path; // Already a complete URL
+  }
+  
+  const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api';
+  const domain = baseUrl.replace('/api', ''); // Remove /api for media URLs
+  return `${domain}${path}`;
+};
+
 const schema = yup.object({
   student: yup.mixed<string | number>()
     .required('Étudiant requis')
@@ -91,12 +102,14 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
     if (filesData?.results) {
       console.log('Available files for transcript:', filesData.results.length);
       filesData.results.forEach((file: FileItem, index: number) => {
+        const completeUrl = buildCompleteUrl(file.firebase_url);
         console.log(`File ${index + 1}:`, {
           id: file.id,
           name: file.original_name,
           firebase_url: file.firebase_url,
+          complete_url: completeUrl,
           url_type: typeof file.firebase_url,
-          is_valid_url: file.firebase_url.startsWith('http')
+          is_complete: completeUrl.startsWith('http')
         });
       });
     }
@@ -172,35 +185,58 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Validate file_url format before submission
-      if (data.file_url && !data.file_url.startsWith('http')) {
+      console.log('Form submission data:', data);
+      console.log('File URL validation check:', {
+        file_url: data.file_url,
+        length: data.file_url?.length,
+        starts_with_http: data.file_url?.startsWith('http'),
+        contains_firebase: data.file_url?.includes('firebase'),
+        contains_media: data.file_url?.includes('media')
+      });
+
+      // Enhanced validation before submission
+      if (!data.file_url) {
+        console.error('File URL is missing');
+        return;
+      }
+
+      const isValidUrl = data.file_url.startsWith('http://') || 
+                        data.file_url.startsWith('https://') || 
+                        data.file_url.startsWith('/') ||
+                        data.file_url.startsWith('./') ||
+                        data.file_url.includes('firebase') ||
+                        data.file_url.includes('media/uploads');
+
+      if (!isValidUrl) {
         console.error('Invalid file URL format:', data.file_url);
         return;
       }
 
       if (isEditing && transcript) {
+        // Build complete URL for update as well
+        const completeFileUrl = data.file_url ? buildCompleteUrl(data.file_url) : undefined;
+        
         const updateData = {
           academic_year: data.academic_year,
           semester: data.semester,
           gpa: data.gpa ?? null,
-          file_url: data.file_url || undefined,
+          file_url: completeFileUrl,
           notes: data.notes,
         };
         
         console.log('Updating transcript with data:', updateData);
+        console.log('Original file URL:', data.file_url);
+        console.log('Complete file URL:', completeFileUrl);
         await updateTranscript({ id: transcript.id, data: updateData }).unwrap();
       } else {
-        // Ensure student is not empty
-        if (!data.student) {
-          console.error('Student field is required');
-          return;
-        }
-
-        // Ensure file_url is valid
+        // Ensure file_url is valid and complete
         if (!data.file_url) {
           console.error('File URL is required');
           return;
         }
+
+        // Build complete URL if it's just a path
+        const completeFileUrl = buildCompleteUrl(data.file_url);
         
         const createData: CreateTranscriptRequest = {
           student: data.student,
@@ -208,16 +244,15 @@ const TranscriptForm: React.FC<TranscriptFormProps> = ({
           semester: data.semester,
           gpa: data.gpa ?? null,
           file_name: data.file_name,
-          file_url: data.file_url,
+          file_url: completeFileUrl,
           uploaded_by: data.uploaded_by,
           notes: data.notes || '',
         };
         
         console.log('Creating transcript with data:', createData);
-        console.log('File URL being submitted:', data.file_url);
-        console.log('File URL type:', typeof data.file_url);
-        console.log('File URL length:', data.file_url?.length);
-        console.log('Is valid URL:', data.file_url.startsWith('http'));
+        console.log('Original file URL:', data.file_url);
+        console.log('Complete file URL:', completeFileUrl);
+        console.log('File URL is valid URL:', completeFileUrl.startsWith('http'));
         
         await createTranscript(createData).unwrap();
       }
