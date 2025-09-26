@@ -52,7 +52,7 @@ interface RelationshipFormData {
   emergency_priority: number;
   can_pickup: boolean;
   can_authorize_medical: boolean;
-  notes: string;
+  notes?: string; // Made optional to match backend and Yup schema
 }
 
 const relationshipSchema = yup.object({
@@ -118,7 +118,7 @@ const ParentStudentRelationships: React.FC = () => {
       emergency_priority: 1,
       can_pickup: false,
       can_authorize_medical: false,
-      notes: ''
+      notes: '' // Optional field, defaults to empty string
     }
   });
 
