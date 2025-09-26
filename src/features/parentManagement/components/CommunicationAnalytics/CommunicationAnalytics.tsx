@@ -69,6 +69,16 @@ const CommunicationAnalytics: React.FC = () => {
 
   return (
     <Box>
+      <Alert severity="warning" sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          🧪 Données de Démonstration
+        </Typography>
+        <Typography variant="body2">
+          Cette section utilise actuellement des données d'exemple pour montrer les fonctionnalités. 
+          Les vraies données de communication seront disponibles une fois le système de notifications entièrement déployé.
+        </Typography>
+      </Alert>
+      
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h2" gutterBottom>
           Analytics & Rapports

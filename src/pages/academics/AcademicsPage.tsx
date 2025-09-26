@@ -240,13 +240,22 @@ const AcademicsPage: React.FC = () => {
       </TabPanel>
 
       <TabPanel value={tabMapping[activeTab]} index={2}>
+        <Alert severity="info" sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            🚧 Fonctionnalité en Construction
+          </Typography>
+          <Typography variant="body2">
+            Les statistiques académiques avancées sont en cours de développement. 
+            Vous pouvez déjà consulter les relevés de notes et rapports de comportement dans les onglets précédents.
+          </Typography>
+        </Alert>
         <Box textAlign="center" py={8}>
           <Analytics sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary" gutterBottom>
             Statistiques Académiques Bientôt Disponibles
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Cette section affichera des analyses académiques complètes et des rapports.
+            Cette section affichera des analyses académiques complètes et des rapports détaillés.
           </Typography>
         </Box>
       </TabPanel>

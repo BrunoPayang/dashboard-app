@@ -53,6 +53,16 @@ const ReportsPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Alert severity="info" sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          📊 Fonctionnalité en Développement
+        </Typography>
+        <Typography variant="body2">
+          Les statistiques affichées sont basées sur les vraies données de votre école. 
+          Certaines fonctionnalités avancées d'analyse et d'export sont encore en cours de développement.
+        </Typography>
+      </Alert>
+      
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" gutterBottom>
           Rapports et Analyses
