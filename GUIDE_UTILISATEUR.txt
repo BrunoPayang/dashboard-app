@@ -1,0 +1,457 @@
+GUIDE D'UTILISATION - TABLEAU DE BORD SCOLAIRE
+
+===============================================================================
+TABLE DES MATIERES
+===============================================================================
+1. Connexion
+2. Navigation
+3. Tableau de Bord
+4. Gestion des Etudiants
+5. Gestion des Classes
+6. Gestion des Parents
+7. Paiements
+8. Dossiers Academiques
+9. Notifications
+10. Fichiers
+11. Rapports
+12. Parametres
+13. Resolution de Problemes
+
+===============================================================================
+1. CONNEXION
+===============================================================================
+
+Comment se connecter
+--------------------
+1. Ouvrez votre navigateur (Chrome, Firefox, Edge, Safari)
+2. Tapez l'adresse de votre ecole dans la barre d'adresse
+3. Saisissez vos identifiants :
+   - Nom d'utilisateur
+   - Mot de passe
+4. Cliquez sur "Se connecter"
+
+Que faire si vous ne pouvez pas vous connecter
+-----------------------------------------------
+- Verifiez que votre nom d'utilisateur est correct
+- Verifiez que votre mot de passe est correct (attention aux majuscules/minuscules)
+- Contactez l'administrateur de votre ecole pour obtenir vos identifiants
+
+===============================================================================
+2. NAVIGATION
+===============================================================================
+
+Menu Principal (Barre Laterale)
+--------------------------------
+Le menu se trouve a gauche de votre ecran. Vous pouvez cliquer sur :
+- Tableau de Bord - Vue d'ensemble
+- Etudiants - Gestion des eleves
+- Gestion des Classes - Organisation des classes
+- Parents - Gestion des familles
+- Paiements - Suivi financier
+- Academique - Releves de notes et rapports
+- Notifications - Envoi de messages
+- Fichiers - Documents de l'ecole
+- Rapports - Statistiques et analyses
+- Parametres - Configuration
+
+En-tete
+-------
+En haut de l'ecran, vous trouverez :
+- Logo de votre ecole
+- Votre nom (coin superieur droit)
+- Menu utilisateur (cliquez sur votre nom)
+- Bouton de deconnexion
+
+===============================================================================
+3. TABLEAU DE BORD
+===============================================================================
+
+Vue d'Ensemble
+---------------
+Le tableau de bord vous montre :
+- Statistiques rapides (nombre d'etudiants, classes, etc.)
+- Actions recentes
+- Taches importantes a accomplir
+- Evenements a venir
+
+Actions Rapides
+---------------
+Vous pouvez directement :
+- Ajouter un nouvel etudiant
+- Creer une notification
+- Voir les statistiques detaillees
+
+===============================================================================
+4. GESTION DES ETUDIANTS
+===============================================================================
+
+Voir la Liste des Etudiants
+----------------------------
+1. Cliquez sur "Etudiants" dans le menu
+2. Parcourez la liste ou utilisez la barre de recherche
+3. Filtrez par classe, annee, etc. (si disponible)
+
+Ajouter un Nouvel Etudiant
+---------------------------
+1. Cliquez sur "Creer un Etudiant"
+2. Remplissez les informations :
+   - Nom et prenom
+   - Date de naissance
+   - Classe
+   - Informations de contact
+   - Photo (optionnel)
+3. Cliquez sur "Enregistrer"
+
+Modifier un Etudiant
+--------------------
+1. Trouvez l'etudiant dans la liste
+2. Cliquez sur son nom ou sur l'icone "modifier" (crayon)
+3. Modifiez les informations necessaires
+4. Cliquez sur "Enregistrer"
+
+Voir le Profil Complet d'un Etudiant
+-------------------------------------
+1. Cliquez sur le nom de l'etudiant
+2. Consultez :
+   - Informations personnelles
+   - Historique academique
+   - Paiements
+   - Documents associes
+
+Supprimer un Etudiant
+---------------------
+ATTENTION : Cette action est irreversible !
+1. Selectionnez l'etudiant
+2. Cliquez sur "Supprimer" (icone poubelle)
+3. Confirmez la suppression
+
+===============================================================================
+5. GESTION DES CLASSES
+===============================================================================
+
+Voir les Classes
+----------------
+1. Cliquez sur "Gestion des Classes"
+2. Parcourez la liste des classes
+3. Cliquez sur une classe pour voir les details
+
+Creer une Nouvelle Classe
+-------------------------
+1. Cliquez sur "Creer une Classe"
+2. Remplissez :
+   - Nom de la classe (ex: "6eme A", "Terminale S")
+   - Niveau scolaire
+   - Enseignant principal
+   - Capacite maximum
+3. Enregistrez
+
+Gerer les Etudiants d'une Classe
+---------------------------------
+1. Ouvrez la classe
+2. Ajoutez des etudiants en les selectionnant
+3. Retirez des etudiants si necessaire
+
+===============================================================================
+6. GESTION DES PARENTS
+===============================================================================
+
+Voir les Parents
+----------------
+1. Cliquez sur "Parents"
+2. Consultez la liste des familles enregistrees
+
+Ajouter un Parent
+-----------------
+1. Cliquez sur "Ajouter un Parent"
+2. Saisissez :
+   - Nom et prenom
+   - Telephone
+   - Email
+   - Adresse
+3. Associez a un ou plusieurs enfants
+4. Enregistrez
+
+Lier un Parent a un Etudiant
+-----------------------------
+1. Ouvrez le profil du parent ou de l'etudiant
+2. Cliquez sur "Lier" ou "Associer"
+3. Selectionnez l'enfant/parent dans la liste
+4. Confirmez
+
+===============================================================================
+7. PAIEMENTS
+===============================================================================
+
+Consulter les Paiements
+-----------------------
+1. Cliquez sur "Paiements"
+2. Visualisez :
+   - Paiements recus
+   - Factures en attente
+   - Historique des transactions
+
+Enregistrer un Paiement
+-----------------------
+1. Cliquez sur "Nouveau Paiement"
+2. Selectionnez l'etudiant
+3. Saisissez :
+   - Montant
+   - Methode de paiement (especes, cheque, virement)
+   - Motif (scolarite, cantine, transport, etc.)
+   - Date
+4. Enregistrez
+
+Generer une Facture
+-------------------
+1. Selectionnez l'etudiant
+2. Cliquez sur "Creer une Facture"
+3. Choisissez les elements a facturer
+4. Generez et imprimez
+
+===============================================================================
+8. DOSSIERS ACADEMIQUES
+===============================================================================
+
+Creer un Releve de Notes
+-------------------------
+1. Cliquez sur "Academique"
+2. Selectionnez l'onglet "Releves de Notes"
+3. Cliquez sur "Creer un Releve"
+4. Remplissez :
+   - Etudiant : Selectionnez dans la liste deroulante
+   - Annee academique : (ex: 2024-2025)
+   - Semestre : Premier, Deuxieme, ou Rapport Annuel
+   - Moyenne : Note sur 20 (ex: 15.50)
+   - Fichier : Choisissez un document PDF prealablement telecharge
+   - Notes : Commentaires additionnels (optionnel)
+5. Cliquez sur "Enregistrer"
+
+Important pour les Releves de Notes
+-----------------------------------
+- Moyenne : Utilisez l'echelle francaise de 0.00 a 20.00
+- Fichier : Le document doit etre telecharge dans la section "Fichiers" avant de pouvoir le selectionner
+- Format : Privilegiez le format PDF pour les releves
+
+Creer un Rapport de Comportement
+---------------------------------
+1. Dans "Academique", cliquez sur l'onglet "Rapports de Comportement"
+2. Cliquez sur "Creer un Rapport"
+3. Saisissez :
+   - Etudiant concerne
+   - Date de l'incident/observation
+   - Description detaillee
+   - Actions prises
+   - Recommandations
+4. Enregistrez
+
+Consulter l'Historique Academique
+----------------------------------
+1. Ouvrez le profil d'un etudiant
+2. Consultez :
+   - Tous les releves de notes
+   - Rapports de comportement
+   - Evolution des performances
+
+===============================================================================
+9. NOTIFICATIONS
+===============================================================================
+
+Envoyer une Notification
+------------------------
+1. Cliquez sur "Notifications"
+2. Cliquez sur "Nouvelle Notification"
+3. Redigez :
+   - Objet du message
+   - Contenu du message
+   - Destinataires (parents, etudiants, personnel)
+4. Choisissez le mode d'envoi :
+   - Notification dans l'application
+   - Email (si configure)
+   - SMS (si disponible)
+5. Envoyez
+
+Types de Notifications
+----------------------
+- Annonces generales (evenements, fermetures, etc.)
+- Messages individuels (convocations, felicitations)
+- Rappels de paiement
+- Notifications de releves (nouvelles notes disponibles)
+
+Programmer une Notification
+---------------------------
+1. Creez votre message
+2. Cochez "Programmer l'envoi"
+3. Choisissez la date et l'heure
+4. Confirmez
+
+===============================================================================
+10. FICHIERS
+===============================================================================
+
+Telecharger un Document
+-----------------------
+1. Cliquez sur "Fichiers"
+2. Cliquez sur "Telecharger"
+3. Selectionnez le fichier sur votre ordinateur
+4. Choisissez le type :
+   - Releve academique
+   - Rapport de comportement
+   - Recu de paiement
+   - Document etudiant
+   - Autre
+5. Ajoutez une description (optionnel)
+6. Telechargez
+
+Organiser les Fichiers
+----------------------
+- Utilisez les dossiers pour classer par type
+- Nommez clairement vos fichiers
+- Ajoutez des mots-cles pour faciliter la recherche
+
+Partager un Fichier
+-------------------
+1. Trouvez le fichier
+2. Cliquez sur "Partager"
+3. Choisissez si le fichier est public ou prive
+4. Copiez le lien si necessaire
+
+===============================================================================
+11. RAPPORTS
+===============================================================================
+
+Generer des Statistiques
+------------------------
+1. Cliquez sur "Rapports"
+2. Choisissez le type de rapport :
+   - Statistiques d'etudiants
+   - Analyses de paiements
+   - Performance academique
+   - Presence/absence
+3. Selectionnez la periode
+4. Generez le rapport
+
+Exporter les Donnees
+--------------------
+- PDF : Pour impression
+- Excel : Pour analyse detaillee
+- CSV : Pour import dans d'autres logiciels
+
+===============================================================================
+12. PARAMETRES
+===============================================================================
+
+Configuration de l'Ecole
+------------------------
+1. Cliquez sur "Parametres"
+2. Modifiez :
+   - Nom de l'ecole
+   - Logo
+   - Adresse et contacts
+   - Theme et couleurs
+3. Enregistrez les modifications
+
+Gestion des Utilisateurs
+------------------------
+- Ajouter du personnel
+- Modifier les roles (administrateur, secretaire, enseignant)
+- Desactiver des comptes
+
+===============================================================================
+13. RESOLUTION DE PROBLEMES
+===============================================================================
+
+Problemes Courants
+------------------
+
+"Je ne peux pas me connecter"
+Solutions :
+1. Verifiez votre nom d'utilisateur et mot de passe
+2. Effacez le cache de votre navigateur
+3. Contactez l'administrateur
+
+"La page ne charge pas"
+Solutions :
+1. Actualisez la page (F5)
+2. Verifiez votre connexion Internet
+3. Essayez un autre navigateur
+
+"Je ne peux pas telecharger de fichier"
+Solutions :
+1. Verifiez que le fichier fait moins de 10 MB
+2. Utilisez un format supporte (PDF, JPG, PNG, DOC)
+3. Essayez avec un autre fichier
+
+"Erreur lors de la creation d'un releve de notes"
+Solutions :
+1. Verifiez que tous les champs requis sont remplis
+2. Assurez-vous que la moyenne est entre 0.00 et 20.00
+3. Verifiez qu'un fichier est selectionne
+4. Contactez le support si le probleme persiste
+
+"Les notifications ne partent pas"
+Solutions :
+1. Verifiez les adresses email des destinataires
+2. Contactez l'administrateur pour verifier la configuration
+3. Essayez d'envoyer a un seul destinataire test
+
+===============================================================================
+SUPPORT ET ASSISTANCE
+===============================================================================
+
+Qui Contacter
+-------------
+- Problemes techniques : Administrateur IT de l'ecole
+- Questions sur l'utilisation : Secretaire ou responsable administratif
+- Problemes de donnees : Directeur ou responsable pedagogique
+
+Informations a Fournir en Cas de Probleme
+------------------------------------------
+1. Votre nom d'utilisateur
+2. Date et heure du probleme
+3. Description detaillee de ce que vous faisiez
+4. Message d'erreur (si affiche)
+5. Navigateur utilise (Chrome, Firefox, etc.)
+
+===============================================================================
+CONSEILS ET BONNES PRATIQUES
+===============================================================================
+
+Securite
+--------
+- Ne partagez jamais vos identifiants de connexion
+- Deconnectez-vous apres utilisation
+- Utilisez un mot de passe fort
+
+Efficacite
+----------
+- Sauvegardez regulierement vos donnees importantes
+- Organisez vos fichiers avec des noms clairs
+- Utilisez les filtres pour trouver rapidement l'information
+
+Communication
+-------------
+- Redigez des messages clairs dans les notifications
+- Verifiez les destinataires avant d'envoyer
+- Utilisez un langage professionnel
+
+===============================================================================
+MAINTENANCE ET MISES A JOUR
+===============================================================================
+
+Le systeme est regulierement mis a jour pour ameliorer les fonctionnalites et 
+la securite. Les mises a jour sont generalement effectuees en dehors des 
+heures de travail pour ne pas perturber vos activites.
+
+Nouvelles Fonctionnalites
+-------------------------
+Consultez regulierement les annonces pour decouvrir les nouvelles 
+fonctionnalites disponibles.
+
+===============================================================================
+
+Ce guide a ete cree pour vous aider a utiliser efficacement le tableau de 
+bord scolaire. Pour toute question supplementaire, n'hesitez pas a contacter 
+votre administrateur.
+
+Version du document : 1.0
+Derniere mise a jour : Septembre 2025

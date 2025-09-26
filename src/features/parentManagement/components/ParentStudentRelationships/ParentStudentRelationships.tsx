@@ -63,7 +63,7 @@ const relationshipSchema = yup.object({
   emergency_priority: yup.number().min(1, 'La priorité doit être au moins 1').max(5, 'La priorité ne peut pas dépasser 5').required(),
   can_pickup: yup.boolean().required(),
   can_authorize_medical: yup.boolean().required(),
-  notes: yup.string().max(500, 'Les notes ne peuvent pas dépasser 500 caractères').required()
+    notes: yup.string().max(500, 'Les notes ne peuvent pas dépasser 500 caractères')
 });
 
 const ParentStudentRelationships: React.FC = () => {
@@ -546,11 +546,12 @@ const ParentStudentRelationships: React.FC = () => {
                     <TextField
                       {...field}
                       fullWidth
-                      label="Notes"
+                      label="Notes (Optionnel)"
+                      placeholder="Ex: Contact d'urgence principal, horaires de disponibilité, informations importantes..."
                       multiline
                       rows={3}
                       error={!!errors.notes}
-                      helperText={errors.notes?.message}
+                      helperText={errors.notes?.message || 'Ajoutez des informations utiles sur cette relation (max 500 caractères)'}
                       size="small"
                     />
                   )}
