@@ -74,6 +74,9 @@ const SettingsPage: React.FC = () => {
     if (!schoolId) return;
 
     try {
+      console.log('Saving school data:', data);
+      console.log('School ID:', schoolId);
+      
       await patchSchool({ id: schoolId, data }).unwrap();
       setIsEditingSchool(false);
       setSnackbar({
@@ -82,9 +85,34 @@ const SettingsPage: React.FC = () => {
         severity: 'success',
       });
     } catch (error: any) {
+      console.error('School save error:', error);
+      console.error('Error details:', error?.data);
+      
+      let errorMessage = 'Erreur lors de la mise à jour';
+      
+      if (error?.data?.detail) {
+        errorMessage = error.data.detail;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.data) {
+        // Handle validation errors
+        const validationErrors = Object.entries(error.data)
+          .map(([field, messages]: [string, any]) => {
+            if (Array.isArray(messages)) {
+              return `${field}: ${messages.join(', ')}`;
+            }
+            return `${field}: ${messages}`;
+          })
+          .join('; ');
+        
+        if (validationErrors) {
+          errorMessage = `Erreurs de validation: ${validationErrors}`;
+        }
+      }
+      
       setSnackbar({
         open: true,
-        message: error?.data?.message || 'Erreur lors de la mise à jour',
+        message: errorMessage,
         severity: 'error',
       });
     }
@@ -94,7 +122,26 @@ const SettingsPage: React.FC = () => {
     if (!schoolId) return;
 
     try {
-      await patchConfiguration({ id: schoolId, data }).unwrap();
+      console.log('Saving configuration data:', data);
+      console.log('School ID:', schoolId);
+      
+      // Clean up the data - remove any undefined values and ensure proper types
+      const cleanData = Object.keys(data).reduce((acc: any, key) => {
+        const value = data[key];
+        if (value !== undefined && value !== null) {
+          // Convert string numbers to actual numbers for numeric fields
+          if (key === 'payment_reminder_days' || key === 'max_file_size_mb') {
+            acc[key] = Number(value);
+          } else {
+            acc[key] = value;
+          }
+        }
+        return acc;
+      }, {});
+      
+      console.log('Clean configuration data:', cleanData);
+      
+      await patchConfiguration({ id: schoolId, data: cleanData }).unwrap();
       setIsEditingConfiguration(false);
       setSnackbar({
         open: true,
@@ -102,9 +149,34 @@ const SettingsPage: React.FC = () => {
         severity: 'success',
       });
     } catch (error: any) {
+      console.error('Configuration save error:', error);
+      console.error('Error details:', error?.data);
+      
+      let errorMessage = 'Erreur lors de la mise à jour';
+      
+      if (error?.data?.detail) {
+        errorMessage = error.data.detail;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.data) {
+        // Handle validation errors
+        const validationErrors = Object.entries(error.data)
+          .map(([field, messages]: [string, any]) => {
+            if (Array.isArray(messages)) {
+              return `${field}: ${messages.join(', ')}`;
+            }
+            return `${field}: ${messages}`;
+          })
+          .join('; ');
+        
+        if (validationErrors) {
+          errorMessage = `Erreurs de validation: ${validationErrors}`;
+        }
+      }
+      
       setSnackbar({
         open: true,
-        message: error?.data?.message || 'Erreur lors de la mise à jour',
+        message: errorMessage,
         severity: 'error',
       });
     }

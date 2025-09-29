@@ -75,6 +75,21 @@ const LogoFileSelector: React.FC<LogoFileSelectorProps> = ({
     return <FileIcon />;
   }, [isImageFile]);
 
+  // Get proper file URL - handle both firebase URLs and relative paths
+  const getFileUrl = useCallback((file: FileItem) => {
+    let url = file.firebase_url;
+    
+    // If the URL is relative, make it absolute
+    if (url && !url.startsWith('http')) {
+      const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com';
+      // Remove /api from baseUrl if present for media files
+      const mediaBaseUrl = baseUrl.replace('/api', '');
+      url = `${mediaBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+    }
+    
+    return url;
+  }, []);
+
   // Handle file selection
   const handleFileSelect = (file: FileItem) => {
     setSelectedFile(file);
@@ -83,7 +98,8 @@ const LogoFileSelector: React.FC<LogoFileSelectorProps> = ({
   // Confirm selection and close dialog
   const handleConfirm = () => {
     if (selectedFile) {
-      onChange(selectedFile.firebase_url);
+      const fileUrl = getFileUrl(selectedFile);
+      onChange(fileUrl);
       setDialogOpen(false);
       setSelectedFile(null);
       setSearchQuery('');
@@ -217,9 +233,14 @@ const LogoFileSelector: React.FC<LogoFileSelectorProps> = ({
                         <CardMedia
                           component="img"
                           height="120"
-                          image={file.firebase_url}
+                          image={getFileUrl(file)}
                           alt={file.original_name}
                           sx={{ objectFit: 'cover' }}
+                          onError={(e) => {
+                            console.error('Failed to load image:', file.firebase_url);
+                            // Hide the broken image and show file icon instead
+                            (e.target as HTMLElement).style.display = 'none';
+                          }}
                         />
                       ) : (
                         <Box
@@ -298,9 +319,13 @@ const LogoFileSelector: React.FC<LogoFileSelectorProps> = ({
                 {isImageFile(selectedFile) ? (
                   <Box
                     component="img"
-                    src={selectedFile.firebase_url}
+                    src={getFileUrl(selectedFile)}
                     alt={selectedFile.original_name}
                     sx={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 1 }}
+                    onError={(e) => {
+                      console.error('Failed to load preview image:', selectedFile.firebase_url);
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
                   />
                 ) : (
                   <Box
