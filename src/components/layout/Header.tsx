@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </IconButton>
         
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-          {hasLogo && (
+          {hasLogo && logoUrl && (
             <Box
               component="img"
               src={logoUrl}

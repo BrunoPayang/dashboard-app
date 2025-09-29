@@ -10,7 +10,7 @@ const TokenStatusNotification: React.FC = () => {
 
   return (
     <Snackbar
-      open={isTokenError}
+      open={Boolean(isTokenError)}
       autoHideDuration={3000}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
     >
