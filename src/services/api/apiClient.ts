@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { validateTokens } from '../../utils/tokenUtils';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -9,13 +10,54 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and validate before requests
 apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('access_token');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config: InternalAxiosRequestConfig) => {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    
+    // Skip token validation for auth endpoints
+    if (config.url?.includes('/auth/')) {
+      if (accessToken && config.headers) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+      return config;
     }
+    
+    // Validate tokens before making the request
+    const tokenValidation = validateTokens(accessToken, refreshToken);
+    
+    if (tokenValidation.needsLogin) {
+      // Redirect to login if tokens are completely invalid
+      window.location.href = '/login';
+      return Promise.reject(new Error('Authentication required'));
+    }
+    
+    if (tokenValidation.needsRefresh && refreshToken) {
+      // Try to refresh token before the request
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL || 'https://schoolconnect-qeaf.onrender.com/api'}/auth/token/refresh/`,
+          { refresh: refreshToken }
+        );
+        
+        const { access } = response.data;
+        localStorage.setItem('access_token', access);
+        
+        if (config.headers) {
+          config.headers.Authorization = `Bearer ${access}`;
+        }
+      } catch (refreshError) {
+        console.error('Proactive token refresh failed:', refreshError);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    } else if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    
     return config;
   },
   (error) => {

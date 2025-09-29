@@ -41,6 +41,7 @@ const SchoolConfigurationEditForm: React.FC<SchoolConfigurationEditFormProps> = 
     academic_year_start: configuration.academic_year_start,
     academic_year_end: configuration.academic_year_end,
     current_semester: configuration.current_semester,
+    logo: configuration.logo || '',
     enable_sms_notifications: configuration.enable_sms_notifications,
     enable_email_notifications: configuration.enable_email_notifications,
     enable_push_notifications: configuration.enable_push_notifications,
@@ -168,6 +169,18 @@ const SchoolConfigurationEditForm: React.FC<SchoolConfigurationEditFormProps> = 
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={8}>
+              <TextField
+                fullWidth
+                label="Logo de l'École (URL/Chemin du fichier)"
+                value={formData.logo || ''}
+                onChange={handleChange('logo')}
+                placeholder="https://example.com/logo.png ou /uploads/logos/school-logo.png"
+                disabled={isLoading}
+                helperText="URL complète ou chemin relatif vers le fichier logo de l'école. Ce logo sera utilisé en priorité dans toute l'application."
+              />
             </Grid>
 
             {/* Notification Settings */}

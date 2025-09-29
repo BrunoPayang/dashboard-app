@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from '../features/store';
-import { checkAuthStatus, setUser, setSchool, logout } from '../features/auth/authSlice';
-import { useLoginMutation } from '../features/auth/authApi';
+import { checkAuthStatus, setUser, setSchool, setTokens, logout } from '../features/auth/authSlice';
+import { useLoginMutation, useRefreshTokenMutation } from '../features/auth/authApi';
+import { validateTokens } from '../utils/tokenUtils';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +13,50 @@ export const useAuth = () => {
   );
 
   const [loginMutation] = useLoginMutation();
+  const [refreshTokenMutation] = useRefreshTokenMutation();
+
+  const refreshTokens = async (): Promise<boolean> => {
+    try {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (!refreshToken) {
+        return false;
+      }
+
+      const result = await refreshTokenMutation({ refresh: refreshToken }).unwrap();
+      
+      if (result.access) {
+        dispatch(setTokens({ access: result.access, refresh: result.refresh }));
+        console.log('Tokens refreshed successfully');
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
+  };
+
+  const checkAndRefreshTokens = async (): Promise<boolean> => {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    
+    const tokenValidation = validateTokens(accessToken, refreshToken);
+    
+    if (tokenValidation.needsLogin) {
+      // Tokens are completely invalid, need full login
+      dispatch(logout());
+      return false;
+    }
+    
+    if (tokenValidation.needsRefresh) {
+      // Try to refresh tokens
+      return await refreshTokens();
+    }
+    
+    // Tokens are valid
+    return tokenValidation.isValid;
+  };
 
   const login = async (credentials: { username: string; password: string }) => {
     try {
@@ -81,5 +126,7 @@ export const useAuth = () => {
     login,
     logout: logoutUser,
     checkAuth,
+    refreshTokens,
+    checkAndRefreshTokens,
   };
 };

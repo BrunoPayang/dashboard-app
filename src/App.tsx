@@ -3,7 +3,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, CircularProgress } from '@mui/material';
 import { RootState } from './features/store';
-import { checkAuthStatus } from './features/auth/authSlice';
+import { checkAuthStatus, logout, setTokens } from './features/auth/authSlice';
+import { useAuth } from './hooks/useAuth';
+import { tokenMonitor } from './services/auth/tokenMonitor';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -29,12 +31,44 @@ import GlobalLoadingOverlay from './components/common/GlobalLoadingOverlay';
 
 function App() {
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const { isLoading, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { checkAndRefreshTokens } = useAuth();
 
-  // Check for existing token on app load
+  // Check for existing token on app load and validate/refresh if needed
   useEffect(() => {
-    dispatch(checkAuthStatus());
-  }, [dispatch]);
+    const initializeAuth = async () => {
+      // First do basic auth check
+      dispatch(checkAuthStatus());
+      
+      // Then validate and refresh tokens if needed
+      await checkAndRefreshTokens();
+    };
+    
+    initializeAuth();
+  }, [dispatch, checkAndRefreshTokens]);
+
+  // Start token monitoring when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      tokenMonitor.startMonitoring(
+        // On token expired - silently logout
+        () => {
+          dispatch(logout());
+        },
+        // On token refreshed - silently update tokens
+        (tokens) => {
+          dispatch(setTokens(tokens));
+        }
+      );
+    } else {
+      tokenMonitor.stopMonitoring();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      tokenMonitor.stopMonitoring();
+    };
+  }, [isAuthenticated, dispatch]);
 
   if (isLoading) {
     return (

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User, School, AuthState as AuthStateType } from '../../types/auth';
+import { validateTokens } from '../../utils/tokenUtils';
 
 // Use the centralized types
 export type { User, School } from '../../types/auth';
@@ -55,16 +56,53 @@ const authSlice = createSlice({
       localStorage.removeItem('school');
       state.school = null;
     },
+    setTokens: (state, action: PayloadAction<{ access: string; refresh?: string }>) => {
+      const { access, refresh } = action.payload;
+      localStorage.setItem('access_token', access);
+      if (refresh) {
+        localStorage.setItem('refresh_token', refresh);
+      }
+      // Ensure user stays authenticated after token refresh
+      state.isAuthenticated = true;
+      state.error = null;
+    },
     checkAuthStatus: (state) => {
-      const token = localStorage.getItem('access_token');
+      const accessToken = localStorage.getItem('access_token');
+      const refreshToken = localStorage.getItem('refresh_token');
       const userStr = localStorage.getItem('user');
       const schoolStr = localStorage.getItem('school');
       
-      if (token && userStr) {
+      // Validate tokens first
+      const tokenValidation = validateTokens(accessToken, refreshToken);
+      
+      if (!tokenValidation.isValid) {
+        console.log('Token validation failed:', tokenValidation.reason);
+        
+        if (tokenValidation.needsLogin) {
+          // Clear all data and force login
+          state.user = null;
+          state.school = null;
+          state.isAuthenticated = false;
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('school');
+          return;
+        }
+        
+        // If refresh is needed, don't show error - handle silently
+        if (tokenValidation.needsRefresh) {
+          // Token refresh will be handled automatically by interceptors
+          console.log('Token refresh needed - will be handled automatically');
+        }
+      }
+      
+      // If we have valid tokens and user data, restore the session
+      if (accessToken && userStr) {
         try {
           const user = JSON.parse(userStr);
           state.user = user;
-          state.isAuthenticated = true;
+          state.isAuthenticated = tokenValidation.isValid;
           
           // Only load school if it exists and has a valid ID (not 'default')
           if (schoolStr) {
@@ -78,9 +116,15 @@ const authSlice = createSlice({
             }
           }
         } catch (error) {
+          console.error('Error parsing stored user data:', error);
+          // Clear corrupted data
           state.user = null;
           state.school = null;
           state.isAuthenticated = false;
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('school');
         }
       }
     },
@@ -95,6 +139,7 @@ export const {
   logout,
   clearError,
   clearInvalidSchoolData,
+  setTokens,
   checkAuthStatus,
 } = authSlice.actions;
 

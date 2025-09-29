@@ -147,6 +147,7 @@ const SchoolEditForm: React.FC<SchoolEditFormProps> = ({
                 onChange={handleChange('logo')}
                 placeholder="https://example.com/logo.png"
                 disabled={isLoading}
+                helperText="Note: Le logo dans la configuration de l'école aura la priorité sur ce logo"
               />
             </Grid>
 

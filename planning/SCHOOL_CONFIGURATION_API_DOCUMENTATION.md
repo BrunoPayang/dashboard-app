@@ -391,6 +391,7 @@ Update entire configuration settings (full replacement).
   "academic_year_start": "2024-09-01",
   "academic_year_end": "2025-06-30",
   "current_semester": "second",
+  "logo": "/uploads/logos/school-logo.png",
   "enable_sms_notifications": false,
   "enable_email_notifications": true,
   "enable_push_notifications": true,
@@ -405,6 +406,7 @@ Update entire configuration settings (full replacement).
 - `academic_year_start` (date): Start date of academic year (YYYY-MM-DD)
 - `academic_year_end` (date): End date of academic year (YYYY-MM-DD)
 - `current_semester` (string): Current semester (`first`, `second`, `third`)
+- `logo` (string): School logo file path or URL (optional)
 - `enable_sms_notifications` (boolean): Enable SMS notifications
 - `enable_email_notifications` (boolean): Enable email notifications
 - `enable_push_notifications` (boolean): Enable push notifications
@@ -426,6 +428,13 @@ Partially update configuration settings.
   "academic_year_start": "2024-08-15",
   "academic_year_end": "2025-07-15",
   "current_semester": "first"
+}
+```
+
+**Update logo only:**
+```json
+{
+  "logo": "/uploads/logos/new-school-logo.png"
 }
 ```
 

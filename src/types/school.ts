@@ -4,6 +4,7 @@ export interface SchoolConfiguration {
   academic_year_start: string;
   academic_year_end: string;
   current_semester: 'first' | 'second' | 'third';
+  logo?: string;
   enable_sms_notifications: boolean;
   enable_email_notifications: boolean;
   enable_push_notifications: boolean;
@@ -145,6 +146,7 @@ export interface SchoolConfigurationUpdateRequest {
   academic_year_start?: string;
   academic_year_end?: string;
   current_semester?: 'first' | 'second' | 'third';
+  logo?: string;
   enable_sms_notifications?: boolean;
   enable_email_notifications?: boolean;
   enable_push_notifications?: boolean;

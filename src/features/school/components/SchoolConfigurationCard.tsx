@@ -87,6 +87,33 @@ const SchoolConfigurationCard: React.FC<SchoolConfigurationCardProps> = ({
             />
           </Grid>
 
+          <Grid item xs={12} md={8}>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Logo de l'École
+            </Typography>
+            {configuration.logo ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <img 
+                  src={configuration.logo} 
+                  alt="Logo de l'école" 
+                  style={{ 
+                    maxHeight: '40px', 
+                    maxWidth: '120px', 
+                    objectFit: 'contain',
+                    borderRadius: '4px'
+                  }} 
+                />
+                <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.75rem' }}>
+                  {configuration.logo}
+                </Typography>
+              </Box>
+            ) : (
+              <Typography variant="body2" color="textSecondary" fontStyle="italic">
+                Aucun logo configuré
+              </Typography>
+            )}
+          </Grid>
+
           {/* Notification Settings */}
           <Grid item xs={12}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>

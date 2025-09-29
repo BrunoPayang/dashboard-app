@@ -19,6 +19,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState, AppDispatch } from '../../features/store';
 import { logout } from '../../features/auth/authSlice';
+import { useSchoolLogo } from '../../hooks/useSchoolLogo';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { user, school } = useSelector((state: RootState) => state.auth);
+  const { logoUrl, hasLogo } = useSchoolLogo();
   
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -71,16 +73,17 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         </IconButton>
         
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-          {school?.logo && (
+          {hasLogo && (
             <Box
               component="img"
-              src={school.logo}
-              alt={school.name}
+              src={logoUrl}
+              alt={school?.name || 'School Logo'}
               sx={{
                 height: 40,
                 width: 40,
                 mr: 2,
                 borderRadius: 1,
+                objectFit: 'contain',
               }}
             />
           )}

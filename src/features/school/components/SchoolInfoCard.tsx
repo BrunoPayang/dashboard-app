@@ -18,6 +18,7 @@ import {
   Cancel as UnverifiedIcon,
 } from '@mui/icons-material';
 import { School } from '../../../types/school';
+import { useSchoolLogo } from '../../../hooks/useSchoolLogo';
 
 interface SchoolInfoCardProps {
   school: School;
@@ -25,6 +26,8 @@ interface SchoolInfoCardProps {
 }
 
 const SchoolInfoCard: React.FC<SchoolInfoCardProps> = ({ school, onEdit: _onEdit }) => {
+  const { logoUrl } = useSchoolLogo();
+
   const getSchoolTypeLabel = (type: string) => {
     const types = {
       primary: 'Primaire',
@@ -42,7 +45,7 @@ const SchoolInfoCard: React.FC<SchoolInfoCardProps> = ({ school, onEdit: _onEdit
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar
-              src={school.logo}
+              src={logoUrl || school.logo || undefined}
               sx={{ width: 60, height: 60, bgcolor: 'primary.main' }}
             >
               <SchoolIcon sx={{ fontSize: 30 }} />

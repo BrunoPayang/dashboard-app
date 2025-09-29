@@ -14,9 +14,11 @@ import {
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../features/store';
+import { useSchoolLogo } from '../../hooks/useSchoolLogo';
 
 const DashboardHeader: React.FC = () => {
   const { user, school } = useSelector((state: RootState) => state.auth);
+  const { logoUrl } = useSchoolLogo();
 
   if (!user || !school) {
     return null;
@@ -37,6 +39,7 @@ const DashboardHeader: React.FC = () => {
         {/* School Information */}
         <Box display="flex" alignItems="center" gap={2} flex={1}>
           <Avatar 
+            src={logoUrl || undefined}
             sx={{ 
               bgcolor: 'rgba(255,255,255,0.2)', 
               width: 80, 
