@@ -3,9 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, CircularProgress } from '@mui/material';
 import { RootState } from './features/store';
-import { checkAuthStatus, logout, setTokens } from './features/auth/authSlice';
-import { useAuth } from './hooks/useAuth';
-import { tokenMonitor } from './services/auth/tokenMonitor';
+import { checkAuthStatus } from './features/auth/authSlice';
+// Temporarily disabled to prevent infinite loops:
+// import { useAuth } from './hooks/useAuth';
+// import { tokenMonitor } from './services/auth/tokenMonitor';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -31,44 +32,29 @@ import GlobalLoadingOverlay from './components/common/GlobalLoadingOverlay';
 
 function App() {
   const dispatch = useDispatch();
-  const { isLoading, isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { checkAndRefreshTokens } = useAuth();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
+  // Temporarily disabled: const { checkAndRefreshTokens } = useAuth();
 
-  // Check for existing token on app load and validate/refresh if needed
+  // Check for existing token on app load - simplified version
   useEffect(() => {
-    const initializeAuth = async () => {
-      // First do basic auth check
-      dispatch(checkAuthStatus());
-      
-      // Then validate and refresh tokens if needed
-      await checkAndRefreshTokens();
-    };
-    
-    initializeAuth();
-  }, [dispatch, checkAndRefreshTokens]);
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
 
-  // Start token monitoring when authenticated
+  // Temporarily disabled token monitoring to prevent infinite loops
+  // TODO: Fix token monitoring system
+  /*
   useEffect(() => {
     if (isAuthenticated) {
       tokenMonitor.startMonitoring(
-        // On token expired - silently logout
-        () => {
-          dispatch(logout());
-        },
-        // On token refreshed - silently update tokens
-        (tokens) => {
-          dispatch(setTokens(tokens));
-        }
+        () => dispatch(logout()),
+        (tokens) => dispatch(setTokens(tokens))
       );
     } else {
       tokenMonitor.stopMonitoring();
     }
-
-    // Cleanup on unmount
-    return () => {
-      tokenMonitor.stopMonitoring();
-    };
+    return () => tokenMonitor.stopMonitoring();
   }, [isAuthenticated, dispatch]);
+  */
 
   if (isLoading) {
     return (
