@@ -19,6 +19,7 @@ import {
   Divider,
 } from '@mui/material';
 import { School, SchoolUpdateRequest } from '../../../types/school';
+import { LogoFileSelector } from '../../../components/common';
 
 interface SchoolEditFormProps {
   school: School;
@@ -140,13 +141,11 @@ const SchoolEditForm: React.FC<SchoolEditFormProps> = ({
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Logo URL"
-                value={formData.logo}
-                onChange={handleChange('logo')}
+              <LogoFileSelector
+                label="Logo de l'École"
+                value={formData.logo || ''}
+                onChange={(url) => setFormData(prev => ({ ...prev, logo: url }))}
                 placeholder="https://example.com/logo.png"
-                disabled={isLoading}
                 helperText="Note: Le logo dans la configuration de l'école aura la priorité sur ce logo"
               />
             </Grid>

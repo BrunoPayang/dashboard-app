@@ -21,6 +21,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { SchoolConfigurationResponse, SchoolConfigurationUpdateRequest } from '../../../types/school';
+import { LogoFileSelector } from '../../../components/common';
 
 interface SchoolConfigurationEditFormProps {
   configuration: SchoolConfigurationResponse;
@@ -172,14 +173,12 @@ const SchoolConfigurationEditForm: React.FC<SchoolConfigurationEditFormProps> = 
             </Grid>
 
             <Grid item xs={12} md={8}>
-              <TextField
-                fullWidth
-                label="Logo de l'École (URL/Chemin du fichier)"
+              <LogoFileSelector
+                label="Logo de l'École"
                 value={formData.logo || ''}
-                onChange={handleChange('logo')}
-                placeholder="https://example.com/logo.png ou /uploads/logos/school-logo.png"
-                disabled={isLoading}
-                helperText="URL complète ou chemin relatif vers le fichier logo de l'école. Ce logo sera utilisé en priorité dans toute l'application."
+                onChange={(url) => setFormData(prev => ({ ...prev, logo: url }))}
+                placeholder="https://example.com/logo.png"
+                helperText="Sélectionnez depuis les fichiers uploadés ou saisissez une URL. Ce logo sera utilisé en priorité dans toute l'application."
               />
             </Grid>
 
